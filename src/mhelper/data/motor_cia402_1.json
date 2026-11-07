@@ -1,0 +1,235 @@
+{
+    "slave_node_id" : 3,
+    "axis_index" : 1,
+    "axis_type_and_limits" : {
+        "axis_type" : {
+            "select_option" : {
+                "finite" : {
+                    "software_limits" : {
+                        "activate" : false,
+                        "negative" : 0,
+                        "positive" : 1000
+                    }
+                },
+                "modulo" : {
+                    "modulo_settings" : {
+                        "modulo_value" : 360
+                    }
+                }
+            },
+            "select_value" : "finite"
+        },
+        "software_error_reaction" : {
+            "deceleration" : 1000,
+            "max_distance" : 0
+        },
+        "virtual_mode" : true
+    },
+    "dynamic_limits" : {
+        "acceleration" : 1000,
+        "deceleration" : 1000,
+        "jerk" : 10000,
+        "velocity" : 500
+    },
+    "velocity_ramp_type" : {
+        "select_option" : [
+            "trapezoid",
+            "sin2",
+            "quadratic",
+            "quadratic(smooth)"
+        ],
+        "select_value" : "trapezoid"
+    },
+    "identification" : {
+        "id" : 1
+    },
+    "position_lag_supervision" : {
+        "select_option" : {
+            "deactivated" : {
+                "lag_limit" : {
+                    "changeable" : false,
+                    "value" : 1
+                }
+            },
+            "disable_drive" : {
+                "lag_limit" : {
+                    "changeable" : true,
+                    "value" : 1
+                }
+            },
+            "do_quick_stop" : {
+                "lag_limit" : {
+                    "changeable" : true,
+                    "value" : 1
+                }
+            },
+            "stay_enabled" : {
+                "lag_limit" : {
+                    "changeable" : true,
+                    "value" : 1
+                }
+            }
+        },
+        "select_value" : "deactivated"
+    },
+    "motor_type" : {
+        "select_option" : {
+            "linear" : {
+                "scaling" : {
+                    "increments_units_in_application" : [
+                        1,
+                        1
+                    ],
+                    "invert_direction" : false
+                }
+            },
+            "rotary" : {
+                "scaling" : {
+                    "gear_output_turns_units_in_application" : [
+                        1,
+                        1
+                    ],
+                    "increments_motor_turns" : [
+                        1,
+                        1
+                    ],
+                    "invert_direction" : false,
+                    "motor_turns_gear_output_turns" : [
+                        1,
+                        1
+                    ]
+                }
+            }
+        },
+        "select_value" : "rotary"
+    },
+    "mapping" : {
+        "automatic_mapping" : true,
+        "servo_ctrl" : {
+            "add_torque_value" : {
+                "address" : "",
+                "enable" : false,
+                "type" : ""
+            },
+            "add_velocity_value" : {
+                "address" : "",
+                "enable" : false,
+                "type" : ""
+            },
+            "control_word" : {
+                "address" : "%QW1",
+                "enable" : true,
+                "type" : "UINT"
+            },
+            "digital_output" : {
+                "address" : "",
+                "enable" : false,
+                "type" : ""
+            },
+            "modes_of_operation" : {
+                "address" : "",
+                "enable" : false,
+                "type" : ""
+            },
+            "set_position" : {
+                "address" : "%QD1",
+                "enable" : true,
+                "type" : "DINT"
+            },
+            "set_torque" : {
+                "address" : "",
+                "enable" : false,
+                "type" : ""
+            },
+            "set_velocity" : {
+                "address" : "%QD2",
+                "enable" : true,
+                "type" : "DINT"
+            },
+            "touch_probe_function" : {
+                "address" : "%QW6",
+                "enable" : true,
+                "type" : "UINT"
+            }
+        },
+        "servo_stat" : {
+            "actual_position" : {
+                "address" : "%ID2",
+                "enable" : true,
+                "type" : "DINT"
+            },
+            "actual_torque" : {
+                "address" : "",
+                "enable" : false,
+                "type" : ""
+            },
+            "actual_velocity" : {
+                "address" : "",
+                "enable" : false,
+                "type" : ""
+            },
+            "digital_inputs" : {
+                "address" : "%ID3",
+                "enable" : true,
+                "type" : "UDINT"
+            },
+            "following_error" : {
+                "address" : "",
+                "enable" : false,
+                "type" : ""
+            },
+            "modes_of_operation_display" : {
+                "address" : "%IB24",
+                "enable" : true,
+                "type" : "SINT"
+            },
+            "status_word" : {
+                "address" : "%IW2",
+                "enable" : true,
+                "type" : "UINT"
+            },
+            "touch_probe_1_falling_edge" : {
+                "address" : "",
+                "enable" : false,
+                "type" : ""
+            },
+            "touch_probe_1_rising_edge" : {
+                "address" : "%ID5",
+                "enable" : true,
+                "type" : "DINT"
+            },
+            "touch_probe_2_falling_edge" : {
+                "address" : "",
+                "enable" : false,
+                "type" : ""
+            },
+            "touch_probe_2_rising_edge" : {
+                "address" : "",
+                "enable" : false,
+                "type" : ""
+            },
+            "touch_probe_status" : {
+                "address" : "%IW8",
+                "enable" : true,
+                "type" : "UINT"
+            }
+        },
+        "servos" : [
+            {
+                "length" : 48,
+                "name" : "servo_stat"
+            },
+            {
+                "length" : 36,
+                "name" : "servo_ctrl"
+            }
+        ]
+    },
+    "task_name" : "MainTask",
+    "task_cycle_time" : 20000,
+	"debug":{
+		"level": 1,
+		"modulo": 100,
+        "servo_fak_pos": 0
+	}
+}

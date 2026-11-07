@@ -1,0 +1,9 @@
+// Date: 2026-10-22; Author: GPT-6 Codex.
+axis 0
+poweron
+wait_ticks 50
+speed 100
+accel 1000
+decel 1000
+movesgabs 12
+wait_idle 0

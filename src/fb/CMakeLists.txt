@@ -1,0 +1,66 @@
+include_directories(".")
+include_directories("include")
+include_directories("include/axis")
+include_directories("include/axfb")
+include_directories("include/axgrp")
+include_directories("include/motbuf")
+include_directories("./include/fb")
+include_directories("include/impl")
+include_directories("include/misc")
+include_directories("include/toy")
+include_directories("include/api")
+include_directories("include/mnode")
+include_directories("include/pou")
+include_directories("include/sdo")
+include_directories("include/ecat")
+include_directories("include/bridge")
+include_directories("include/io")
+include_directories("include/qcmd")
+include_directories("include/memory")
+include_directories("../mhelper")
+include_directories("../base")
+include_directories("../base/include")
+include_directories("../vel")
+include_directories("../vel/include")
+include_directories("../traj")
+include_directories("../traj/include")
+include_directories("../fb")
+include_directories("../utils")
+
+set( lib_name plcfb)
+# file(GLOB plcfb_src_temp0 *.h*)
+file(GLOB_RECURSE plcfb_src_temp1 source/*.h* source/axis/*.c* source/fb/*.c* source/misc/*.c* source/api/*.c* source/axfb/*.c* source/axgrp/*.c* source/motbuf/*.c* source/mnode/*.c*
+     source/pou/*.c* source/sdo/*.c* source/ecat/*.c* source/bridge/*.c* source/io/*.c* source/qcmd/*.c* source/memory/*.c*
+) 
+# source/*.c* 
+set(plcfb_src "${plcfb_src_temp1}" CACHE STRING INTERNAL FORCE)
+add_library(plcfb ${plcfb_src} )
+
+target_compile_definitions(plcfb PRIVATE ZMC_DLLBUILD)
+target_link_libraries(plcfb vel traj mhelper)
+add_dependencies(plcfb mhelper)
+
+install(TARGETS plcfb DESTINATION lib/${BUILD_OPT})
+install(TARGETS plcfb DESTINATION bin/${BUILD_OPT})
+file(GLOB LIB_HEADFILES ${PROJECT_SOURCE_DIR}/*.h* )
+install(FILES ${LIB_HEADFILES} DESTINATION include/plcfb)
+# Public C clients include the same command-result protocol.
+install(FILES include/motbuf/MotionCmdResult.h DESTINATION include/motbuf)
+
+add_subdirectory(demo)
+
+if (ENABLE_DEV_UNITTEST)
+    enable_testing()
+
+    file(GLOB_RECURSE plcfb_test_src test/*.h* test/*.c*)
+
+    add_executable(test_plcfb ${plcfb_test_src})
+    target_link_libraries(test_plcfb ${THIRD_LIBS} plcfb)
+    # target_include_directories(base PRIVATE ${THIRD_INCLUDE})
+    add_test(fb test_plcfb)
+    install(TARGETS test_plcfb DESTINATION bin/${BUILD_OPT})
+endif()
+
+if (USE_BENCH)
+    # add_subdirectory(bench)
+endif()

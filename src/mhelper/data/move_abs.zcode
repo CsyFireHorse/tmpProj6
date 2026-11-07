@@ -1,0 +1,7 @@
+base 0
+powerOn
+wait_tick 1000
+speed 10
+movesgabs 10
+wait_tick 5000
+movesgabs -10

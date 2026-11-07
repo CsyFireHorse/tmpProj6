@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--KPA EtherCAT Studio Premium version: 1.12.247.0 licensed to Guangzhou ZLG MCU Technology Co., Ltd.-->
+<!--Copyright (c) 2005-2017 koenig-pa GmbH. All rights reserved-->
+<EtherCATConfig>
+</EtherCATConfig>
+<!-- @@##ENI_INFO##@@
+{
+    "master":{
+      "base":{
+         "cycle_time": 1000
+      }
+    },
+    "slaves" : [
+        {
+            "name" : "Slave 1 (DM3C-EC556)",
+            "vendor_id" : "17185",
+            "vendor_name" : "Leadshine Technology Co.,Ltd.",
+            "type" : "DM3C-EC556(COE)",
+            "product_code" : "34304",
+            "revision_no" : "1",
+            "product_revision" : "0000-0001-0000",
+            "phys_addr" : "1001",
+            "auto_inc_addr" : "0",
+            "outputs" : [
+                {
+                    "channel" : "Receive PDO 1",
+                    "name" : "Control Word",
+                    "index" : "24640",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "0"
+                },
+                {
+                    "channel" : "Receive PDO 1",
+                    "name" : "Profile Target Position",
+                    "index" : "24698",
+                    "subindex" : "0",
+                    "type" : "DINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "16"
+                },
+                {
+                    "channel" : "Receive PDO 1",
+                    "name" : "Touch Probe Function",
+                    "index" : "24760",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "48"
+                }
+            ],
+            "inputs" : [
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Last Error Code",
+                    "index" : "24639",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "0"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Status Word",
+                    "index" : "24641",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "16"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Modes of Operation display",
+                    "index" : "24673",
+                    "subindex" : "0",
+                    "type" : "SINT",
+                    "bit_size" : "8",
+                    "bit_offset" : "32"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Position Actual Value",
+                    "index" : "24676",
+                    "subindex" : "0",
+                    "type" : "DINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "40"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Touch Probe Status",
+                    "index" : "24761",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "72"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Touch Probe 1 Positive Value",
+                    "index" : "24762",
+                    "subindex" : "0",
+                    "type" : "DINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "88"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Digital Inputs",
+                    "index" : "24829",
+                    "subindex" : "0",
+                    "type" : "UDINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "120"
+                }
+            ]
+        },
+        {
+            "name" : "Slave 2 (CL3-E57H)",
+            "vendor_id" : "2681",
+            "vendor_name" : "Shenzhen Xinchuan Electric Technology Co.,Ltd",
+            "type" : "CL3-E57H",
+            "product_code" : "4096",
+            "revision_no" : "1",
+            "product_revision" : "0000-0001-0000",
+            "phys_addr" : "1002",
+            "auto_inc_addr" : "65535",
+            "outputs" : [
+                {
+                    "channel" : "RxPDO 1",
+                    "name" : "ControlWord",
+                    "index" : "24640",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "64"
+                },
+                {
+                    "channel" : "RxPDO 1",
+                    "name" : "Target position",
+                    "index" : "24698",
+                    "subindex" : "0",
+                    "type" : "DINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "80"
+                },
+                {
+                    "channel" : "RxPDO 1",
+                    "name" : "Target Velocity",
+                    "index" : "24831",
+                    "subindex" : "0",
+                    "type" : "DINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "112"
+                },
+                {
+                    "channel" : "RxPDO 1",
+                    "name" : "Touch Probe Function",
+                    "index" : "24760",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "144"
+                }
+            ],
+            "inputs" : [
+                {
+                    "channel" : "TxPDO 1",
+                    "name" : "ErrorCode",
+                    "index" : "24639",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "152"
+                },
+                {
+                    "channel" : "TxPDO 1",
+                    "name" : "StatusWord",
+                    "index" : "24641",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "168"
+                },
+                {
+                    "channel" : "TxPDO 1",
+                    "name" : "Position actual value",
+                    "index" : "24676",
+                    "subindex" : "0",
+                    "type" : "DINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "184"
+                },
+                {
+                    "channel" : "TxPDO 1",
+                    "name" : "Digital inputs",
+                    "index" : "24829",
+                    "subindex" : "0",
+                    "type" : "UDINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "216"
+                },
+                {
+                    "channel" : "TxPDO 1",
+                    "name" : "Touch Probe Status",
+                    "index" : "24761",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "248"
+                },
+                {
+                    "channel" : "TxPDO 1",
+                    "name" : "Touch Probe Position 1 Positive Value",
+                    "index" : "24762",
+                    "subindex" : "0",
+                    "type" : "DINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "264"
+                },
+                {
+                    "channel" : "TxPDO 1",
+                    "name" : "Modes of operation display",
+                    "index" : "24673",
+                    "subindex" : "0",
+                    "type" : "SINT",
+                    "bit_size" : "8",
+                    "bit_offset" : "296"
+                }
+            ]
+        },
+        {
+            "name" : "Slave 3 (CL3-EC507)",
+            "vendor_id" : "17185",
+            "vendor_name" : "Leadshine Technology Co.,Ltd.",
+            "type" : "CL3-EC507(COE)",
+            "product_code" : "256",
+            "revision_no" : "1",
+            "product_revision" : "0000-0001-0000",
+            "phys_addr" : "1003",
+            "auto_inc_addr" : "65534",
+            "outputs" : [
+                {
+                    "channel" : "Receive PDO 1",
+                    "name" : "Control Word",
+                    "index" : "24640",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "160"
+                },
+                {
+                    "channel" : "Receive PDO 1",
+                    "name" : "Profile Target Position",
+                    "index" : "24698",
+                    "subindex" : "0",
+                    "type" : "DINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "176"
+                },
+                {
+                    "channel" : "Receive PDO 1",
+                    "name" : "Touch Probe Function",
+                    "index" : "24760",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "208"
+                }
+            ],
+            "inputs" : [
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Last Error Code",
+                    "index" : "24639",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "304"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Status Word",
+                    "index" : "24641",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "320"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Modes of Operation display",
+                    "index" : "24673",
+                    "subindex" : "0",
+                    "type" : "SINT",
+                    "bit_size" : "8",
+                    "bit_offset" : "336"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Position Actual Value",
+                    "index" : "24676",
+                    "subindex" : "0",
+                    "type" : "DINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "344"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Touch Probe Status",
+                    "index" : "24761",
+                    "subindex" : "0",
+                    "type" : "UINT",
+                    "bit_size" : "16",
+                    "bit_offset" : "376"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Touch Probe 1 Positive Value",
+                    "index" : "24762",
+                    "subindex" : "0",
+                    "type" : "DINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "392"
+                },
+                {
+                    "channel" : "Transmit PDO 1",
+                    "name" : "Digital Inputs",
+                    "index" : "24829",
+                    "subindex" : "0",
+                    "type" : "UDINT",
+                    "bit_size" : "32",
+                    "bit_offset" : "424"
+                }
+            ]
+        },
+        {
+            "name" : "Slave 4 (EK1100)",
+            "vendor_id" : "2",
+            "vendor_name" : "Beckhoff Automation GmbH & Co. KG",
+            "type" : "EK1100 EtherCAT Coupler (2A E-Bus)",
+            "product_code" : "72100946",
+            "revision_no" : "1179648",
+            "product_revision" : "EK1100-0000-0018",
+            "phys_addr" : "1004",
+            "auto_inc_addr" : "65533",
+            "outputs" : [
+
+            ],
+            "inputs" : [
+
+            ]
+        },
+        {
+            "name" : "Slave 5 (EL2809)",
+            "vendor_id" : "2",
+            "vendor_name" : "Unknown",
+            "type" : "EL2809 16K. Dig. Ausgang 24V, 0.5A",
+            "product_code" : "184102994",
+            "revision_no" : "1179648",
+            "product_revision" : "EL2809-0000-0018",
+            "phys_addr" : "1005",
+            "auto_inc_addr" : "65532",
+            "outputs" : [
+                {
+                    "channel" : "Channel 1",
+                    "name" : "Output",
+                    "index" : "28672",
+                    "subindex" : "1",
+                    "type" : "BOOL",
+                    "bit_size" : "1",
+                    "bit_offset" : "456"
+                },
+                {
+                    "channel" : "Channel 2",
+                    "name" : "Output",
+                    "index" : "28688",
+                    "subindex" : "1",
+                    "type" : "BOOL",
+                    "bit_size" : "1",
+                    "bit_offset" : "457"
+                },
+                {
+                    "channel" : "Channel 3",
+                    "name" : "Output",
+                    "index" : "28704",
+                    "subindex" : "1",
+                    "type" : "BOOL",
+                    "bit_size" : "1",
+                    "bit_offset" : "458"
+                },
+                {
+                    "channel" : "Channel 4",
+                    "name" : "Output",
+                    "index" : "28720",
+                    "subindex" : "1",
+                    "type" : "BOOL",
+                    "bit_size" : "1",
+                    "bit_offset" : "459"
+                },
+                {
+                    "channel" : "Channel 5",
+                    "name" : "Output",
+                    "index" : "28736",
+                    "subindex" : "1",
+                    "type" : "BOOL",
+                    "bit_size" : "1",
+                    "bit_offset" : "460"
+                },
+                {
+                    "channel" : "Channel 6",
+                    "name" : "Output",
+                    "index" : "28752",
+                    "subindex" : "1",
+                    "type" : "BOOL",
+                    "bit_size" : "1",
+                    "bit_offset" : "461"
+                },
+                {
+                    "channel" : "Channel 7",
+                    "name" : "Output",
+                    "index" : "28768",
+                    "subindex" : "1",
+                    "type" : "BOOL",
+                    "bit_size" : "1",
+                    "bit_offset" : "462"
+                },
+                {
+                    "channel" : "Channel 8",
+                    "name" : "Output",
+                    "index" : "28784",
+                    "subindex" : "1",
+                    "type" : "BOOL",
+                    "bit_size" : "1",
+                    "bit_offset" : "463"
+                }
+            ],
+            "inputs" : [
+
+            ]
+        }
+    ]
+} -->

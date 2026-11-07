@@ -1,0 +1,13 @@
+base 0
+powerOn
+wait_tick 1000
+speed 100
+movesg 10
+wait_idle
+defpos 20
+wait_idle
+units 10
+wait_idle
+movesg 5
+wait_idle
+units 5

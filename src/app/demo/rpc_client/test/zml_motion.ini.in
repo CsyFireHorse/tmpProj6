@@ -1,0 +1,37 @@
+; 日期：2026-10-22
+; 代笔：GPT-6 Codex
+; Virtual axes use the production INI loader without external motor files.
+[base]
+axis_num=@ZML_AXIS_NUM@
+eni_path=@ZML_ENI@
+count_to_exit=0
+
+[axis_0]
+is_axis_virtual=1
+motor_type=rotary
+increments_units_in_application_num=1
+increments_units_in_application_den=1
+gear_application_num=@ZML_UNITS@
+gear_application_den=1
+increments_motor_turns_num=1
+increments_motor_turns_den=1
+motor_gear_num=1
+motor_gear_den=1
+cycle_time=1000
+software_limits.is_activate=0
+
+[axis_1]
+is_axis_virtual=1
+id=1
+axis_index=1
+motor_type=linear
+increments_units_in_application_num=1
+increments_units_in_application_den=1
+gear_application_num=1000
+gear_application_den=1
+increments_motor_turns_num=1
+increments_motor_turns_den=1
+motor_gear_num=1
+motor_gear_den=1
+cycle_time=1000
+software_limits.is_activate=1

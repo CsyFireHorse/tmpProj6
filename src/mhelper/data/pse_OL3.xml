@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--ZLG EtherCAT Studio Express version: 1.0.0.1-->
+<!--Copyright (c) 2004-2020 zhiyuan. All rights reserved-->
+<EtherCATConfig>
+</EtherCATConfig>
+<!-- @@##ENI_INFO##@@
+{
+    "eni_version" : "2.0.0",
+    "version" : "",
+    "master" : {
+        "base" : {
+            "init_master_state" : "INIT",
+            "cycle_time" : 1000,
+            "mailbox_cycle_time" : 5000,
+            "auto_recovery_timeout" : 100,
+            "process_image_display_period" : 1000,
+            "statistics_display_period" : 1000
+        },
+        "process_image" : {
+            "output_variables" : {
+                "size" : 12,
+                "length" : 12
+            },
+            "input_variables" : {
+                "size" : 19,
+                "length" : 19
+            }
+        },
+        "cyclic" : {
+            "type" : "LRD_LWR",
+            "generate_separate_cyclic_commands" : false,
+            "separate_io_update" : false
+        },
+        "slave_logic_addr_mapping" : {
+            "input" : false,
+            "output" : false
+        },
+        "slave_infos" : [
+            {
+                "phys_addr" : 1001,
+                "input_logic_addr" : 0,
+                "output_logic_addr" : 0
+            }
+        ]
+    },
+    "slaves" : [
+        {
+            "name" : "Slave1 (OL3-E57H)",
+            "vendor_id" : 2681,
+            "vendor_name" : "Shenzhen Xinchuan Electric Technology Co.,Ltd",
+            "type" : "OL3-E57H",
+            "product_code" : 8192,
+            "revision_no" : 1,
+            "product_revision" : "0000-0001-0000",
+            "phys_addr" : 1001,
+            "auto_inc_addr" : 0,
+            "outputs" : [
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1600 RxPDO 1",
+                    "name" : "0x6040:0 ControlWord",
+                    "index" : 24640,
+                    "subindex" : 0,
+                    "type" : "UINT",
+                    "bit_size" : 16,
+                    "bit_offset" : 0
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1600 RxPDO 1",
+                    "name" : "0x607A:0 Target position",
+                    "index" : 24698,
+                    "subindex" : 0,
+                    "type" : "DINT",
+                    "bit_size" : 32,
+                    "bit_offset" : 16
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1600 RxPDO 1",
+                    "name" : "0x60FF:0 Target Velocity",
+                    "index" : 24831,
+                    "subindex" : 0,
+                    "type" : "DINT",
+                    "bit_size" : 32,
+                    "bit_offset" : 48
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1600 RxPDO 1",
+                    "name" : "0x60B8:0 Touch Probe Function",
+                    "index" : 24760,
+                    "subindex" : 0,
+                    "type" : "UINT",
+                    "bit_size" : 16,
+                    "bit_offset" : 80
+                }
+            ],
+            "inputs" : [
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A00 TxPDO 1",
+                    "name" : "0x603F:0 ErrorCode",
+                    "index" : 24639,
+                    "subindex" : 0,
+                    "type" : "UINT",
+                    "bit_size" : 16,
+                    "bit_offset" : 0
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A00 TxPDO 1",
+                    "name" : "0x6041:0 StatusWord",
+                    "index" : 24641,
+                    "subindex" : 0,
+                    "type" : "UINT",
+                    "bit_size" : 16,
+                    "bit_offset" : 16
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A00 TxPDO 1",
+                    "name" : "0x6064:0 Position actual value",
+                    "index" : 24676,
+                    "subindex" : 0,
+                    "type" : "DINT",
+                    "bit_size" : 32,
+                    "bit_offset" : 32
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A00 TxPDO 1",
+                    "name" : "0x60FD:0 Digital inputs",
+                    "index" : 24829,
+                    "subindex" : 0,
+                    "type" : "UDINT",
+                    "bit_size" : 32,
+                    "bit_offset" : 64
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A00 TxPDO 1",
+                    "name" : "0x60B9:0 Touch Probe Status",
+                    "index" : 24761,
+                    "subindex" : 0,
+                    "type" : "UINT",
+                    "bit_size" : 16,
+                    "bit_offset" : 96
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A00 TxPDO 1",
+                    "name" : "0x60BA:0 Touch Probe Position 1 Positive Value",
+                    "index" : 24762,
+                    "subindex" : 0,
+                    "type" : "DINT",
+                    "bit_size" : 32,
+                    "bit_offset" : 112
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A00 TxPDO 1",
+                    "name" : "0x6061:0 Modes of operation display",
+                    "index" : 24673,
+                    "subindex" : 0,
+                    "type" : "SINT",
+                    "bit_size" : 8,
+                    "bit_offset" : 144
+                }
+            ]
+        }
+    ]
+} -->

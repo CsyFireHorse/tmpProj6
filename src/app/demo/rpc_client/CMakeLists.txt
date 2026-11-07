@@ -1,0 +1,15 @@
+include_directories("../..")
+include_directories("../../include")
+include_directories("../../../fb/include")
+include_directories("../../../thirdlib/rpclib/include")
+include_directories("include")
+
+file(GLOB zmc_motapp_rpc_client_source demo/*.cpp source/*.cpp)
+add_executable(zmc_motapp_rpc_client ${zmc_motapp_rpc_client_source})
+target_link_libraries(zmc_motapp_rpc_client rpc)
+target_compile_definitions(zmc_motapp_rpc_client PRIVATE ZML_EXPORTS)
+install(TARGETS zmc_motapp_rpc_client DESTINATION bin/${BUILD_OPT})
+
+if(ENABLE_DEV_UNITTEST)
+    add_subdirectory(test)
+endif()

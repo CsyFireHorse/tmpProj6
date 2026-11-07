@@ -1,0 +1,10 @@
+base 0
+powerOn
+base 1
+powerOn
+wait_tick 1000
+group 0 1
+grp_en
+move 30 40
+wait_tick 5000
+moveabs 10 20

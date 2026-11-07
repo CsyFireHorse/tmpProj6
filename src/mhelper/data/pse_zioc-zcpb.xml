@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--ZLG EtherCAT Studio Express version: 1.0.0.1-->
+<!--Copyright (c) 2004-2020 zhiyuan. All rights reserved-->
+<EtherCATConfig>
+  <CRC>39555f4fefa6bd7a43aeae3d04a16963|2.0.0</CRC><Config>
+</EtherCATConfig>
+<!-- @@##ENI_INFO##@@
+{
+    "eni_version" : "2.0.0",
+    "version" : "2.2.0-rc.68",
+    "master" : {
+        "base" : {
+            "init_master_state" : "INIT",
+            "cycle_time" : 1000,
+            "mailbox_cycle_time" : 5000,
+            "auto_recovery_timeout" : 100,
+            "process_image_display_period" : 1000,
+            "statistics_display_period" : 1000
+        },
+        "process_image" : {
+            "output_variables" : {
+                "size" : 20,
+                "length" : 26
+            },
+            "input_variables" : {
+                "size" : 19,
+                "length" : 19
+            }
+        },
+        "cyclic" : {
+            "type" : "LRW",
+            "generate_separate_cyclic_commands" : false,
+            "separate_io_update" : false,
+            "update_slave_state" : false
+        },
+        "slave_logic_addr_mapping" : {
+            "input" : false,
+            "output" : false
+        },
+        "other_pdo_info" : {
+            "input_logic_addr" : 144,
+            "output_logic_addr" : 144,
+            "input_bit_size" : 8,
+            "output_bit_size" : 64
+        },
+        "slave_infos" : [
+            {
+                "phys_addr" : 1001,
+                "input_logic_addr" : 0,
+                "output_logic_addr" : 0,
+                "slave_state_logic_addr" : 0
+            },
+            {
+                "phys_addr" : 1002,
+                "input_logic_addr" : 96,
+                "output_logic_addr" : 0,
+                "slave_state_logic_addr" : 0
+            },
+            {
+                "phys_addr" : 1003,
+                "input_logic_addr" : 112,
+                "output_logic_addr" : 0,
+                "slave_state_logic_addr" : 0
+            },
+            {
+                "phys_addr" : 1004,
+                "input_logic_addr" : 128,
+                "output_logic_addr" : 0,
+                "slave_state_logic_addr" : 0
+            },
+            {
+                "phys_addr" : 1005,
+                "input_logic_addr" : 0,
+                "output_logic_addr" : 96,
+                "slave_state_logic_addr" : 0
+            },
+            {
+                "phys_addr" : 1006,
+                "input_logic_addr" : 0,
+                "output_logic_addr" : 112,
+                "slave_state_logic_addr" : 0
+            },
+            {
+                "phys_addr" : 1007,
+                "input_logic_addr" : 0,
+                "output_logic_addr" : 128,
+                "slave_state_logic_addr" : 0
+            },
+            {
+                "phys_addr" : 1008,
+                "input_logic_addr" : 0,
+                "output_logic_addr" : 0,
+                "slave_state_logic_addr" : 0
+            }
+        ]
+    },
+    "slaves" : [
+        {
+            "name" : "Slave6 (ZIOC-E0016DN)",
+            "vendor_id" : 2103313,
+            "vendor_name" : "Guangzhou ZHIYUAN Electronics Co.,Ltd.",
+            "type" : "ZIOC-E0016DN",
+            "product_code" : 16842780,
+            "revision_no" : 65536,
+            "product_revision" : "0257-0000-0001",
+            "phys_addr" : 1005,
+            "auto_inc_addr" : 65532,
+            "outputs" : [
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1600 Output Byte0",
+                    "name" : "0x7000:1 Output",
+                    "index" : 28672,
+                    "subindex" : 1,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 96
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1601 Output Byte1",
+                    "name" : "0x7001:2 Output",
+                    "index" : 28673,
+                    "subindex" : 2,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 104
+                }
+            ],
+            "inputs" : [
+
+            ]
+        },
+        {
+            "name" : "Slave7 (ZCPC-80801)",
+            "vendor_id" : 2103313,
+            "vendor_name" : "Guangzhou ZHIYUAN Electronics Co.,Ltd.",
+            "type" : "ZCPC-80801",
+            "product_code" : 16908292,
+            "revision_no" : 65536,
+            "product_revision" : "0258-0000-0001",
+            "phys_addr" : 1001,
+            "auto_inc_addr" : 0,
+            "outputs" : [
+
+            ],
+            "inputs" : [
+
+            ]
+        },
+        {
+            "name" : "Slave8 (ZIOC-E1600DN)",
+            "vendor_id" : 2103313,
+            "vendor_name" : "Guangzhou ZHIYUAN Electronics Co.,Ltd.",
+            "type" : "ZIOC-E1600DN",
+            "product_code" : 16842778,
+            "revision_no" : 65536,
+            "product_revision" : "0257-0000-0001",
+            "phys_addr" : 1002,
+            "auto_inc_addr" : 65535,
+            "outputs" : [
+
+            ],
+            "inputs" : [
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A00 Input Byte 0",
+                    "name" : "0x6000:1 Input",
+                    "index" : 24576,
+                    "subindex" : 1,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 96
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A01 Input Byte 1",
+                    "name" : "0x6001:2 Input",
+                    "index" : 24577,
+                    "subindex" : 2,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 104
+                }
+            ]
+        },
+        {
+            "name" : "Slave9 (ZIOC-E1600DN)",
+            "vendor_id" : 2103313,
+            "vendor_name" : "Guangzhou ZHIYUAN Electronics Co.,Ltd.",
+            "type" : "ZIOC-E1600DN",
+            "product_code" : 16842778,
+            "revision_no" : 65536,
+            "product_revision" : "0257-0000-0001",
+            "phys_addr" : 1003,
+            "auto_inc_addr" : 65534,
+            "outputs" : [
+
+            ],
+            "inputs" : [
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A00 Input Byte 0",
+                    "name" : "0x6000:1 Input",
+                    "index" : 24576,
+                    "subindex" : 1,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 112
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A01 Input Byte 1",
+                    "name" : "0x6001:2 Input",
+                    "index" : 24577,
+                    "subindex" : 2,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 120
+                }
+            ]
+        },
+        {
+            "name" : "Slave10 (ZIOC-E1600DN)",
+            "vendor_id" : 2103313,
+            "vendor_name" : "Guangzhou ZHIYUAN Electronics Co.,Ltd.",
+            "type" : "ZIOC-E1600DN",
+            "product_code" : 16842778,
+            "revision_no" : 65536,
+            "product_revision" : "0257-0000-0001",
+            "phys_addr" : 1004,
+            "auto_inc_addr" : 65533,
+            "outputs" : [
+
+            ],
+            "inputs" : [
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A00 Input Byte 0",
+                    "name" : "0x6000:1 Input",
+                    "index" : 24576,
+                    "subindex" : 1,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 128
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1A01 Input Byte 1",
+                    "name" : "0x6001:2 Input",
+                    "index" : 24577,
+                    "subindex" : 2,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 136
+                }
+            ]
+        },
+        {
+            "name" : "Slave11 (ZIOC-E0016DN)",
+            "vendor_id" : 2103313,
+            "vendor_name" : "Guangzhou ZHIYUAN Electronics Co.,Ltd.",
+            "type" : "ZIOC-E0016DN",
+            "product_code" : 16842780,
+            "revision_no" : 65536,
+            "product_revision" : "0257-0000-0001",
+            "phys_addr" : 1006,
+            "auto_inc_addr" : 65531,
+            "outputs" : [
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1600 Output Byte0",
+                    "name" : "0x7000:1 Output",
+                    "index" : 28672,
+                    "subindex" : 1,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 112
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1601 Output Byte1",
+                    "name" : "0x7001:2 Output",
+                    "index" : 28673,
+                    "subindex" : 2,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 120
+                }
+            ],
+            "inputs" : [
+
+            ]
+        },
+        {
+            "name" : "Slave12 (ZIOC-E0016DN)",
+            "vendor_id" : 2103313,
+            "vendor_name" : "Guangzhou ZHIYUAN Electronics Co.,Ltd.",
+            "type" : "ZIOC-E0016DN",
+            "product_code" : 16842780,
+            "revision_no" : 65536,
+            "product_revision" : "0257-0000-0001",
+            "phys_addr" : 1007,
+            "auto_inc_addr" : 65530,
+            "outputs" : [
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1600 Output Byte0",
+                    "name" : "0x7000:1 Output",
+                    "index" : 28672,
+                    "subindex" : 1,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 128
+                },
+                {
+                    "slot_name" : "",
+                    "module_name" : "",
+                    "channel" : "0x1601 Output Byte1",
+                    "name" : "0x7001:2 Output",
+                    "index" : 28673,
+                    "subindex" : 2,
+                    "type" : "BITARR8",
+                    "bit_size" : 8,
+                    "bit_offset" : 136
+                }
+            ],
+            "inputs" : [
+
+            ]
+        },
+        {
+            "name" : "Slave13 (ZMTC-EF1200)",
+            "vendor_id" : 2103313,
+            "vendor_name" : "Guangzhou ZHIYUAN Electronics Co.,Ltd.",
+            "type" : "ZMTC-EF1200",
+            "product_code" : 17039362,
+            "revision_no" : 65536,
+            "product_revision" : "0260-0000-0001",
+            "phys_addr" : 1008,
+            "auto_inc_addr" : 65529,
+            "outputs" : [
+                {
+                    "slot_name" : "Axis 0",
+                    "module_name" : "csp - axis",
+                    "channel" : "0x1601 Module_0_csp - axis_Outputs",
+                    "name" : "0x6040:0 Control Word",
+                    "index" : 24640,
+                    "subindex" : 0,
+                    "type" : "UINT",
+                    "bit_size" : 16,
+                    "bit_offset" : 0
+                },
+                {
+                    "slot_name" : "Axis 0",
+                    "module_name" : "csp - axis",
+                    "channel" : "0x1601 Module_0_csp - axis_Outputs",
+                    "name" : "0x607A:0 TargetPosition",
+                    "index" : 24698,
+                    "subindex" : 0,
+                    "type" : "DINT",
+                    "bit_size" : 32,
+                    "bit_offset" : 16
+                }
+            ],
+            "inputs" : [
+                {
+                    "slot_name" : "Axis 0",
+                    "module_name" : "csp - axis",
+                    "channel" : "0x1A01 Module_0_csp - axis_Inputs",
+                    "name" : "0x6041:0 Status Word",
+                    "index" : 24641,
+                    "subindex" : 0,
+                    "type" : "UINT",
+                    "bit_size" : 16,
+                    "bit_offset" : 0
+                },
+                {
+                    "slot_name" : "Axis 0",
+                    "module_name" : "csp - axis",
+                    "channel" : "0x1A01 Module_0_csp - axis_Inputs",
+                    "name" : "0x6064:0 ActualPosition",
+                    "index" : 24676,
+                    "subindex" : 0,
+                    "type" : "DINT",
+                    "bit_size" : 32,
+                    "bit_offset" : 16
+                },
+                {
+                    "slot_name" : "Axis 0",
+                    "module_name" : "csp - axis",
+                    "channel" : "0x1A01 Module_0_csp - axis_Inputs",
+                    "name" : "0x603F:0 Error Code",
+                    "index" : 24639,
+                    "subindex" : 0,
+                    "type" : "UINT",
+                    "bit_size" : 16,
+                    "bit_offset" : 48
+                },
+                {
+                    "slot_name" : "Axis 0",
+                    "module_name" : "csp - axis",
+                    "channel" : "0x1A01 Module_0_csp - axis_Inputs",
+                    "name" : "0x60FD:0 Digital Inputs",
+                    "index" : 24829,
+                    "subindex" : 0,
+                    "type" : "UDINT",
+                    "bit_size" : 32,
+                    "bit_offset" : 64
+                }
+            ]
+        }
+    ]
+} -->

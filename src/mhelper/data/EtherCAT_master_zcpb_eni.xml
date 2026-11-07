@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--ZLG EtherCAT Studio Express version: 1.0.0.1-->
+<!--Copyright (c) 2004-2020 zhiyuan. All rights reserved-->
+<EtherCATConfig>
+  <CRC>771b2e90e5ae7034a861791ee77dab10|2.0.0</CRC><Config>
+    <Master>
+      <NIC><![CDATA[]]></NIC>
+      <RNIC><![CDATA[]]></RNIC>
+      <InitialMasterState>1</InitialMasterState>
+      <CycleTime>1000</CycleTime>
+      <MailboxCycleTime>5000</MailboxCycleTime>
+      <AutoRecoveryTimeout>100</AutoRecoveryTimeout>
+      <ProcessImageUpdatePeriod>1000</ProcessImageUpdatePeriod>
+      <StatisticsUpdatePeriod>1000</StatisticsUpdatePeriod>
+      <MaxFrameSize>1514</MaxFrameSize>
+      <SeparateIOUpdate>0</SeparateIOUpdate>
+      <DCUserShiftTime>300000</DCUserShiftTime>
+      <Info>
+        <Name><![CDATA[Master1]]></Name>
+        <Destination>FFFFFFFFFFFF</Destination>
+        <Source>000000000000</Source>
+        <EtherType>a488</EtherType>
+      </Info>
+      <InitCmds>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <BeforeSlave>1</BeforeSlave>
+          <Comment><![CDATA[read slave count]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>7</Cmd>
+          <Adp>0</Adp>
+          <Ado>304</Ado>
+          <Data>0000</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Transition>PI</Transition>
+          <Transition>BI</Transition>
+          <Transition>SI</Transition>
+          <Transition>OI</Transition>
+          <BeforeSlave>1</BeforeSlave>
+          <Comment><![CDATA[clear fmmu]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>8</Cmd>
+          <Adp>0</Adp>
+          <Ado>1536</Ado>
+          <DataLength>256</DataLength>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <BeforeSlave>1</BeforeSlave>
+          <Comment><![CDATA[clear sm]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>8</Cmd>
+          <Adp>0</Adp>
+          <Ado>2048</Ado>
+          <DataLength>256</DataLength>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <BeforeSlave>1</BeforeSlave>
+          <Comment><![CDATA[clear dc system time]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>8</Cmd>
+          <Adp>0</Adp>
+          <Ado>2320</Ado>
+          <DataLength>8</DataLength>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <BeforeSlave>1</BeforeSlave>
+          <Comment><![CDATA[clear dc cycle cfg]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>8</Cmd>
+          <Adp>0</Adp>
+          <Ado>2433</Ado>
+          <Data>00</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <BeforeSlave>1</BeforeSlave>
+          <Comment><![CDATA[reset dc speed]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>8</Cmd>
+          <Adp>0</Adp>
+          <Ado>2352</Ado>
+          <Data>0010</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <BeforeSlave>1</BeforeSlave>
+          <Comment><![CDATA[configure dc filter]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>8</Cmd>
+          <Adp>0</Adp>
+          <Ado>2356</Ado>
+          <Data>000C</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+      </InitCmds>
+    </Master>
+    <Slave Physics="YY" HotPlug="0" Segment="0" SegmentSubIndex="0">
+      <Info>
+        <Name><![CDATA[Temporary]]></Name>
+        <PhysAddr>1001</PhysAddr>
+        <AutoIncAddr>0</AutoIncAddr>
+        <Physics>YY</Physics>
+        <VendorId>0</VendorId>
+        <ProductCode>0</ProductCode>
+        <RevisionNo>0</RevisionNo>
+        <SerialNo>0</SerialNo>
+        <ProductRevision>0000-0000-0000</ProductRevision>
+      </Info>
+      <InitCmds>
+        <InitCmd>
+          <Transition>PI</Transition>
+          <Transition>BI</Transition>
+          <Transition>SI</Transition>
+          <Transition>OI</Transition>
+          <Transition>IP</Transition>
+          <Transition>IB</Transition>
+          <Comment><![CDATA[set device state to INIT]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>2</Cmd>
+          <Adp>0</Adp>
+          <Ado>288</Ado>
+          <Data>0100</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Transition>IB</Transition>
+          <Comment><![CDATA[check device state for INIT]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>1</Cmd>
+          <Adp>0</Adp>
+          <Ado>304</Ado>
+          <Data>0000</Data>
+          <Retries>3</Retries>
+          <Validate>
+            <Data>0100</Data>
+            <DataMask>0F00</DataMask>
+            <Timeout>3000</Timeout>
+          </Validate>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Comment><![CDATA[assign EEPROM to ECAT]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>2</Cmd>
+          <Adp>0</Adp>
+          <Ado>1280</Ado>
+          <Data>00</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Comment><![CDATA[check vendor id request]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>2</Cmd>
+          <Adp>0</Adp>
+          <Ado>1282</Ado>
+          <Data>000108000000</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Comment><![CDATA[check vendor id]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>1</Cmd>
+          <Adp>0</Adp>
+          <Ado>1288</Ado>
+          <Data>00000000</Data>
+          <Retries>3</Retries>
+          <Validate>
+            <Data>00000000</Data>
+            <Timeout>100</Timeout>
+          </Validate>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Comment><![CDATA[check product code request]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>2</Cmd>
+          <Adp>0</Adp>
+          <Ado>1282</Ado>
+          <Data>00010A000000</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Comment><![CDATA[check product code]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>1</Cmd>
+          <Adp>0</Adp>
+          <Ado>1288</Ado>
+          <Data>00000000</Data>
+          <Retries>3</Retries>
+          <Validate>
+            <Data>00000000</Data>
+            <Timeout>100</Timeout>
+          </Validate>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Transition>IB</Transition>
+          <Comment><![CDATA[set physical address]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>2</Cmd>
+          <Adp>0</Adp>
+          <Ado>16</Ado>
+          <Data>E903</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>SP</Transition>
+          <Transition>OP</Transition>
+          <Comment><![CDATA[set device state to PREOP]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>5</Cmd>
+          <Adp>1001</Adp>
+          <Ado>288</Ado>
+          <Data>0200</Data>
+          <Retries>5000</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>SP</Transition>
+          <Transition>OP</Transition>
+          <Comment><![CDATA[check device state for PREOP]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>4</Cmd>
+          <Adp>1001</Adp>
+          <Ado>304</Ado>
+          <Data>0000</Data>
+          <Retries>3</Retries>
+          <Validate>
+            <Data>0200</Data>
+            <DataMask>0F00</DataMask>
+            <Timeout>5000</Timeout>
+          </Validate>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Transition>IB</Transition>
+          <Comment><![CDATA[assign EEPROM to PDI]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>5</Cmd>
+          <Adp>1001</Adp>
+          <Ado>1280</Ado>
+          <Data>01</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>II</Transition>
+          <Comment><![CDATA[assign EEPROM back to ECAT]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>2</Cmd>
+          <Adp>0</Adp>
+          <Ado>1280</Ado>
+          <Data>00</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Comment><![CDATA[set device state to PREOP]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>5</Cmd>
+          <Adp>1001</Adp>
+          <Ado>288</Ado>
+          <Data>0200</Data>
+          <Retries>3000</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Comment><![CDATA[check device state for PREOP]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>4</Cmd>
+          <Adp>1001</Adp>
+          <Ado>304</Ado>
+          <Data>0000</Data>
+          <Retries>3</Retries>
+          <Validate>
+            <Data>0200</Data>
+            <DataMask>1F00</DataMask>
+            <Timeout>3000</Timeout>
+          </Validate>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IP</Transition>
+          <Transition>BI</Transition>
+          <Comment><![CDATA[assign EEPROM back to ECAT]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>2</Cmd>
+          <Adp>0</Adp>
+          <Ado>1280</Ado>
+          <Data>00</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IB</Transition>
+          <Comment><![CDATA[set device state to BOOT]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>5</Cmd>
+          <Adp>1001</Adp>
+          <Ado>288</Ado>
+          <Data>0300</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>IB</Transition>
+          <Comment><![CDATA[check device state for BOOT]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>4</Cmd>
+          <Adp>1001</Adp>
+          <Ado>304</Ado>
+          <Data>0000</Data>
+          <Retries>3</Retries>
+          <Validate>
+            <Data>0300</Data>
+            <DataMask>0F00</DataMask>
+            <Timeout>3000</Timeout>
+          </Validate>
+        </InitCmd>
+        <InitCmd>
+          <Transition>SO</Transition>
+          <Comment><![CDATA[set device state to OP]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>5</Cmd>
+          <Adp>1001</Adp>
+          <Ado>288</Ado>
+          <Data>0800</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>SO</Transition>
+          <Comment><![CDATA[check device state for OP]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>4</Cmd>
+          <Adp>1001</Adp>
+          <Ado>304</Ado>
+          <Data>0000</Data>
+          <Retries>3</Retries>
+          <Validate>
+            <Data>0800</Data>
+            <DataMask>0F00</DataMask>
+            <Timeout>10000</Timeout>
+          </Validate>
+        </InitCmd>
+        <InitCmd>
+          <Transition>PS</Transition>
+          <Transition>OS</Transition>
+          <Comment><![CDATA[set device state to SAFEOP]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>5</Cmd>
+          <Adp>1001</Adp>
+          <Ado>288</Ado>
+          <Data>0400</Data>
+          <Retries>3</Retries>
+        </InitCmd>
+        <InitCmd>
+          <Transition>OS</Transition>
+          <Comment><![CDATA[check device state for SAFEOP (OS)]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>4</Cmd>
+          <Adp>1001</Adp>
+          <Ado>304</Ado>
+          <Data>0000</Data>
+          <Retries>3</Retries>
+          <Validate>
+            <Data>0400</Data>
+            <DataMask>1F00</DataMask>
+            <Timeout>200</Timeout>
+          </Validate>
+        </InitCmd>
+        <InitCmd>
+          <Transition>PS</Transition>
+          <Comment><![CDATA[check device state for SAFEOP (PS)]]></Comment>
+          <Requires>cycle</Requires>
+          <Cmd>4</Cmd>
+          <Adp>1001</Adp>
+          <Ado>304</Ado>
+          <Data>0000</Data>
+          <Retries>3</Retries>
+          <Validate>
+            <Data>0400</Data>
+            <DataMask>1F00</DataMask>
+            <Timeout>10000</Timeout>
+          </Validate>
+        </InitCmd>
+      </InitCmds>
+    </Slave>
+    <ProcessImage>
+      <Inputs>
+        <ByteSize>0</ByteSize>
+      </Inputs>
+      <Outputs>
+        <ByteSize>0</ByteSize>
+      </Outputs>
+    </ProcessImage>
+  </Config>
+</EtherCATConfig>
+<!-- @@##ENI_INFO##@@
+{
+    "eni_version" : "2.0.0",
+    "version" : "2.2.0-rc.67",
+    "master" : {
+        "base" : {
+            "init_master_state" : "INIT",
+            "cycle_time" : 1000,
+            "mailbox_cycle_time" : 5000,
+            "auto_recovery_timeout" : 100,
+            "process_image_display_period" : 1000,
+            "statistics_display_period" : 1000
+        },
+        "process_image" : {
+            "output_variables" : {
+                "size" : 0,
+                "length" : 0
+            },
+            "input_variables" : {
+                "size" : 0,
+                "length" : 0
+            }
+        },
+        "cyclic" : {
+            "type" : "LRW",
+            "generate_separate_cyclic_commands" : false,
+            "separate_io_update" : false,
+            "update_slave_state" : false
+        },
+        "slave_logic_addr_mapping" : {
+            "input" : false,
+            "output" : false
+        },
+        "other_pdo_info" : {
+            "input_logic_addr" : 0,
+            "output_logic_addr" : 0,
+            "input_bit_size" : 0,
+            "output_bit_size" : 0
+        },
+        "slave_infos" : [
+            {
+                "phys_addr" : 1001,
+                "input_logic_addr" : 0,
+                "output_logic_addr" : 0,
+                "slave_state_logic_addr" : 0
+            }
+        ]
+    }
+} -->

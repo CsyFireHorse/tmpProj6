@@ -1,0 +1,2043 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CNC Lite 双通道控制器配置</title>
+<style>
+:root {
+  --bg: #f0f2f5;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --primary: #2563eb;
+  --primary-light: #dbeafe;
+  --primary-dark: #1d4ed8;
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --gray: #94a3b8;
+  --gray-light: #f1f5f9;
+  --gray-lighter: #f8fafc;
+  --teal: #0d9488;
+  --teal-light: #ccfbf1;
+  --purple: #7c3aed;
+  --purple-light: #ede9fe;
+  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  --radius: 8px;
+  --radius-sm: 6px;
+  --radius-lg: 12px;
+  --mono: 'Cascadia Code', 'Fira Code', 'Consolas', 'Courier New', monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: white;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-md);
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-logo {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700;
+}
+.header-title { font-size: 18px; font-weight: 600; }
+.header-subtitle { font-size: 12px; color: #94a3b8; margin-left: 8px; }
+.header-actions { display: none; }
+
+.btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-ghost {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.2); }
+.btn-outline {
+  background: white;
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+}
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+/* ===== TABS ===== */
+.tab-bar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  gap: 4px;
+  position: sticky;
+  top: 60px;
+  z-index: 99;
+  overflow-x: auto;
+}
+.tab {
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tab:hover { color: var(--primary); }
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.tab-badge {
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: var(--gray-light);
+  color: var(--text-secondary);
+}
+.tab.active .tab-badge {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* ===== MAIN CONTENT ===== */
+.content { padding: 24px; max-width: 1600px; margin: 0 auto; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.2s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--gray-lighter);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.card-title-icon {
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.card-body { padding: 20px; }
+.card-body.no-pad { padding: 0; }
+
+/* ===== STATS GRID ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+}
+.stat-card.blue::before { background: var(--primary); }
+.stat-card.green::before { background: var(--success); }
+.stat-card.teal::before { background: var(--teal); }
+.stat-card.purple::before { background: var(--purple); }
+.stat-card.orange::before { background: var(--warning); }
+.stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+.stat-unit { font-size: 14px; font-weight: 400; color: var(--text-muted); }
+.stat-extra { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* ===== TABLES ===== */
+.table-wrapper { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th {
+  text-align: left;
+  padding: 10px 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--gray-lighter);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--gray-lighter); }
+.mono { font-family: var(--mono); font-size: 12px; }
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+.badge-green { background: var(--success-light); color: #065f46; }
+.badge-gray { background: var(--gray-light); color: var(--text-muted); }
+.badge-blue { background: var(--primary-light); color: var(--primary-dark); }
+.badge-orange { background: var(--warning-light); color: #92400e; }
+.badge-red { background: var(--danger-light); color: #991b1b; }
+.badge-teal { background: var(--teal-light); color: #115e59; }
+.badge-purple { background: var(--purple-light); color: #5b21b6; }
+
+.badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot-green { background: var(--success); }
+.dot-gray { background: var(--gray); }
+.dot-blue { background: var(--primary); }
+.dot-orange { background: var(--warning); }
+
+/* ===== SECTION TITLE ===== */
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title-line {
+  width: 3px;
+  height: 18px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+/* ===== TWO COLUMN ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.two-col > * { min-width: 0; }
+.two-col table { min-width: 480px; }
+@media (max-width: 900px) {
+  .two-col { grid-template-columns: 1fr; }
+}
+.card-body.no-pad { overflow-x: auto; }
+
+/* ===== COMPARISON ===== */
+.compare-table th { background: var(--gray-lighter); }
+.compare-table td:first-child { font-weight: 600; color: var(--text-secondary); background: var(--gray-lighter); }
+.compare-ch1 { border-right: 1px solid var(--border); }
+.compare-diff { background: var(--warning-light) !important; }
+
+/* ===== IO LEGEND ===== */
+.io-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+
+/* ===== EDITABLE ===== */
+.editable {
+  cursor: pointer;
+  border-bottom: 1px dashed transparent;
+  transition: border-color 0.15s;
+}
+.editable:hover { border-bottom-color: var(--primary); }
+.edit-input {
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: var(--mono);
+  width: 100%;
+  outline: none;
+}
+/* 下拉框统一固定宽度（IO 地址/轴号/触发方式），不随表格列宽变化 */
+select.edit-input { width: 110px; }
+
+/* ===== EMPTY STATE ===== */
+.empty-row td {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 24px;
+  font-style: italic;
+}
+
+/* ===== SUB SECTION HEADER ===== */
+.sub-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--gray-lighter);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.sub-section-header:first-child { border-top: none; }
+.sub-section-icon { font-size: 14px; }
+
+/* ===== TRAJECTORY ===== */
+.traj-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.traj-item {
+  background: var(--gray-lighter);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  border: 1px solid var(--border);
+}
+.traj-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.traj-value {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--primary);
+}
+.traj-input-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.traj-input {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--primary);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  width: 120px;
+}
+.traj-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.15);
+}
+.traj-unit { font-size: 12px; color: var(--text-muted); font-weight: 400; }
+
+
+/* ===== CONFLICT WARNING ===== */
+.conflict-warning {
+  background: var(--warning-light);
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #92400e;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.6;
+}
+.conflict-warning strong { font-weight: 700; }
+
+/* ===== IO RANGE TABLE ===== */
+.io-range-table td:first-child {
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--gray-lighter);
+  white-space: nowrap;
+}
+
+/* ===== ADD USER ENTRY ===== */
+.add-row-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border: 1px dashed var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.add-row-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-style: solid;
+}
+.add-form-row td {
+  background: var(--primary-light) !important;
+  padding: 8px 14px !important;
+}
+.add-form-row input,
+.add-form-row select {
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-family: var(--mono);
+  width: 100%;
+  outline: none;
+}
+.add-form-row input:focus,
+.add-form-row select:focus { border-color: var(--primary); }
+/* 添加表单里的下拉框与行内 .edit-input 下拉框同尺寸 */
+.add-form-row select.edit-input {
+  width: 110px;
+  padding: 2px 6px;
+  font-size: 13px;
+  border-color: var(--primary);
+}
+.add-form-actions { display: flex; gap: 6px; }
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-sm-confirm { background: var(--success); color: white; }
+.btn-sm-confirm:hover { background: #059669; }
+.btn-sm-cancel { background: var(--gray-light); color: var(--text-secondary); }
+.btn-sm-cancel:hover { background: var(--border-strong); }
+.user-entry-row td { background: #f0fdf4 !important; }
+.user-entry-row:hover td { background: #dcfce7 !important; }
+.delete-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  opacity: 0.6;
+  transition: all 0.15s;
+}
+.delete-btn:hover { opacity: 1; background: var(--danger-light); border-color: var(--danger); }
+.user-tag {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--success-light);
+  color: #065f46;
+  font-weight: 600;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--gray-light); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .header-subtitle { display: none; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .content { padding: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">CNC</div>
+    <div>
+      <span class="header-title">CNC Lite 控制器配置</span>
+      <span class="header-subtitle"></span>
+    </div>
+  </div>
+  <!-- Import/export UI removed: load is owned by the Vue shell; save runs on route leave. -->
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar" id="tabBar">
+  <div class="tab active" data-tab="common">🔧 公共通道 0 <span class="tab-badge">C0/S0/VAR0</span></div>
+  <div class="tab" data-tab="ch1">📍 通道 1 <span class="tab-badge">C1/S1/VAR1</span></div>
+  <div class="tab" data-tab="ch2">📍 通道 2 <span class="tab-badge">C2/S2/VAR2</span></div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- ==================== COMMON I/O ==================== -->
+<div class="tab-panel active" id="panel-common">
+  <div class="section-title"><div class="section-title-line"></div>公共通道 0</div>
+
+  <!-- Basic Info -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="card-title-icon">⚙</span> 通道 0 配置 <span class="badge badge-gray">CHANNEL_0</span></div>
+    </div>
+    <div class="card-body no-pad">
+      <table>
+        <tr><td style="width:30%;font-weight:600;color:var(--text-secondary)">通道 ID</td><td class="mono">0</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-secondary)">命令 (COMMON_COMMANDS)</td><td class="mono">C0 (CAPACITY: 256)</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-secondary)">状态 (COMMON_STATUS)</td><td class="mono">S0 (CAPACITY: 256)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="two-col">
+  <!-- C0: Commands + Direct Inputs -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="card-title-icon">📡</span> 命令/输入 C0 <span class="badge badge-gray">COMMON_COMMANDS</span></div>
+      <span class="badge badge-blue">CAPACITY: 256</span>
+    </div>
+    <div class="card-body no-pad">
+      <table id="commonCmdTable">
+        <thead><tr><th>命令位</th><th>映射地址</th><th>NAME</th><th>中文名</th><th>TRIGGER</th><th>操作</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- S0: Status -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="card-title-icon">📊</span> 状态 S0 <span class="badge badge-gray">COMMON_STATUS</span></div>
+      <span class="badge badge-teal">CAPACITY: 256</span>
+    </div>
+    <div class="card-body no-pad">
+      <table id="commonStatusTable">
+        <thead><tr><th>状态位</th><th>映射地址</th><th>NAME</th><th>中文名</th><th>操作</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+
+  <!-- Address Range Visualization removed -->
+</div>
+
+<!-- ==================== CHANNEL 1 ==================== -->
+<div class="tab-panel" id="panel-ch1">
+  <div class="section-title"><div class="section-title-line"></div>通道 1 配置</div>
+
+  <!-- Basic Info -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="card-title-icon">⚙</span> 基本参数 <span class="badge badge-gray">CHANNEL_1</span></div>
+    </div>
+    <div class="card-body no-pad">
+      <table>
+        <tr><td style="width:30%;font-weight:600;color:var(--text-secondary)">通道 ID</td><td class="mono">1</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-secondary)">命令 (CHANNEL_1_COMMANDS)</td><td class="mono">C1 (CAPACITY: 256)</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-secondary)">状态 (CHANNEL_1_STATUS)</td><td class="mono">S1 (CAPACITY: 256)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Trajectory -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="card-title-icon">🚀</span> 轨迹参数 <span class="badge badge-gray">CHANNEL_1_TRAJECTORY</span></div>
+    </div>
+    <div class="card-body">
+      <div class="traj-grid">
+        <div class="traj-item">
+          <div class="traj-label">DEFAULT_LINEAR_VELOCITY</div>
+          <div class="traj-input-wrap"><input type="number" id="ch1Velocity" class="traj-input" value="200.0" step="0.1" onchange="updateTrajectory(0, 'velocity', this.value)"><span class="traj-unit">mm/s</span></div>
+        </div>
+        <div class="traj-item">
+          <div class="traj-label">DEFAULT_LINEAR_ACCELERATION</div>
+          <div class="traj-input-wrap"><input type="number" id="ch1Acceleration" class="traj-input" value="800.0" step="0.1" onchange="updateTrajectory(0, 'acceleration', this.value)"><span class="traj-unit">mm/s²</span></div>
+        </div>
+        <div class="traj-item">
+          <div class="traj-label">DEFAULT_LINEAR_JERK</div>
+          <div class="traj-input-wrap"><input type="number" id="ch1Jerk" class="traj-input" value="8000.0" step="0.1" onchange="updateTrajectory(0, 'jerk', this.value)"><span class="traj-unit">mm/s³</span></div>
+        </div>
+        <div class="traj-item">
+          <div class="traj-label">PATH_TOLERANCE</div>
+          <div class="traj-input-wrap"><input type="number" id="ch1Tolerance" class="traj-input" value="0.05" step="0.001" onchange="updateTrajectory(0, 'tolerance', this.value)"><span class="traj-unit">mm</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Axes -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="card-title-icon">📍</span> 轴配置 <span class="badge badge-gray">CHANNEL_1_AXES</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="badge badge-green" id="ch1AxesConfigured">4 已配置</span>
+        <span class="badge badge-gray" id="ch1AxesUnconfigured">29 未配置</span>
+      </div>
+    </div>
+    <div class="card-body no-pad">
+      <table id="ch1AxesTable">
+        <thead><tr><th style="width:12%">轴</th><th style="width:22%">属性</th><th>值</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <!-- Command Bank C1 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><span class="card-title-icon">📡</span> 命令 C1 <span class="badge badge-gray">CHANNEL_1_COMMANDS</span></div>
+        <span class="badge badge-purple">CAPACITY: 256</span>
+      </div>
+      <div class="card-body no-pad">
+        <table id="ch1CmdTable">
+          <thead><tr><th>命令位</th><th>映射地址</th><th>NAME</th><th>中文名</th><th>TRIGGER</th><th>操作</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Status Bank S1 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><span class="card-title-icon">📊</span> 状态 S1 <span class="badge badge-gray">CHANNEL_1_STATUS</span></div>
+        <span class="badge badge-orange">CAPACITY: 256</span>
+      </div>
+      <div class="card-body no-pad">
+        <table id="ch1StatusTable">
+          <thead><tr><th>状态位</th><th>映射地址</th><th>NAME</th><th>中文名</th><th>操作</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Address Space removed -->
+</div>
+
+<!-- ==================== CHANNEL 2 ==================== -->
+<div class="tab-panel" id="panel-ch2">
+  <div class="section-title"><div class="section-title-line"></div>通道 2 配置</div>
+
+  <!-- Basic Info -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="card-title-icon">⚙</span> 基本参数 <span class="badge badge-gray">CHANNEL_2</span></div>
+    </div>
+    <div class="card-body no-pad">
+      <table>
+        <tr><td style="width:30%;font-weight:600;color:var(--text-secondary)">通道 ID</td><td class="mono">2</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-secondary)">命令 (CHANNEL_2_COMMANDS)</td><td class="mono">C2 (CAPACITY: 256)</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-secondary)">状态 (CHANNEL_2_STATUS)</td><td class="mono">S2 (CAPACITY: 256)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Trajectory -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="card-title-icon">🚀</span> 轨迹参数 <span class="badge badge-gray">CHANNEL_2_TRAJECTORY</span></div>
+    </div>
+    <div class="card-body">
+      <div class="traj-grid">
+        <div class="traj-item">
+          <div class="traj-label">DEFAULT_LINEAR_VELOCITY</div>
+          <div class="traj-input-wrap"><input type="number" id="ch2Velocity" class="traj-input" value="200.0" step="0.1" onchange="updateTrajectory(1, 'velocity', this.value)"><span class="traj-unit">mm/s</span></div>
+        </div>
+        <div class="traj-item">
+          <div class="traj-label">DEFAULT_LINEAR_ACCELERATION</div>
+          <div class="traj-input-wrap"><input type="number" id="ch2Acceleration" class="traj-input" value="800.0" step="0.1" onchange="updateTrajectory(1, 'acceleration', this.value)"><span class="traj-unit">mm/s²</span></div>
+        </div>
+        <div class="traj-item">
+          <div class="traj-label">DEFAULT_LINEAR_JERK</div>
+          <div class="traj-input-wrap"><input type="number" id="ch2Jerk" class="traj-input" value="8000.0" step="0.1" onchange="updateTrajectory(1, 'jerk', this.value)"><span class="traj-unit">mm/s³</span></div>
+        </div>
+        <div class="traj-item">
+          <div class="traj-label">PATH_TOLERANCE</div>
+          <div class="traj-input-wrap"><input type="number" id="ch2Tolerance" class="traj-input" value="0.05" step="0.001" onchange="updateTrajectory(1, 'tolerance', this.value)"><span class="traj-unit">mm</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Axes -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="card-title-icon">📍</span> 轴配置 <span class="badge badge-gray">CHANNEL_2_AXES</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="badge badge-green" id="ch2AxesConfigured">4 已配置</span>
+        <span class="badge badge-gray" id="ch2AxesUnconfigured">29 未配置</span>
+      </div>
+    </div>
+    <div class="card-body no-pad">
+      <table id="ch2AxesTable">
+        <thead><tr><th style="width:12%">轴</th><th style="width:22%">属性</th><th>值</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <!-- Command Bank C2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><span class="card-title-icon">📡</span> 命令 C2 <span class="badge badge-gray">CHANNEL_2_COMMANDS</span></div>
+        <span class="badge badge-purple">CAPACITY: 256</span>
+      </div>
+      <div class="card-body no-pad">
+        <table id="ch2CmdTable">
+          <thead><tr><th>命令位</th><th>映射地址</th><th>NAME</th><th>中文名</th><th>TRIGGER</th><th>操作</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Status Bank S2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><span class="card-title-icon">📊</span> 状态 S2 <span class="badge badge-gray">CHANNEL_2_STATUS</span></div>
+        <span class="badge badge-orange">CAPACITY: 256</span>
+      </div>
+      <div class="card-body no-pad">
+        <table id="ch2StatusTable">
+          <thead><tr><th>状态位</th><th>映射地址</th><th>NAME</th><th>中文名</th><th>操作</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Address Space removed -->
+</div>
+
+</div><!-- end content -->
+
+<script>
+// ==================== DATA MODEL ====================
+// 生成通道轴配置：SPINDLE 置首 + 6 命名轴(X/Y/Z/A/B/C) + 25 AUX 轴 = 32 逻辑轴
+// 逻辑槽位号按通道独立编号，两个通道均为 0-31
+function makeChannelAxes(channelIdx, baseAddr) {
+  const axes = [
+    { name: 'SPINDLE', type: 'spindle', slot: 0, phys: 'NULL' },
+    { name: 'X', type: 'linear', slot: 1, phys: 'NULL', posLimit: 'I' + (baseAddr + 9), negLimit: 'I' + (baseAddr + 10), home: 'I' + (baseAddr + 11), idxSrc: 'ENCODER', idxIn: 'NULL' },
+    { name: 'Y', type: 'linear', slot: 2, phys: 'NULL', posLimit: 'I' + (baseAddr + 12), negLimit: 'I' + (baseAddr + 13), home: 'I' + (baseAddr + 14), idxSrc: 'ENCODER', idxIn: 'NULL' },
+    { name: 'Z', type: 'linear', slot: 3, phys: 'NULL', posLimit: 'I' + (baseAddr + 15), negLimit: 'I' + (baseAddr + 16), home: 'I' + (baseAddr + 17), idxSrc: 'ENCODER', idxIn: 'NULL' },
+    { name: 'A', type: 'linear', slot: 4, phys: 'NULL', posLimit: 'NULL', negLimit: 'NULL', home: 'NULL', idxSrc: 'NULL', idxIn: 'NULL' },
+    { name: 'B', type: 'linear', slot: 5, phys: 'NULL', posLimit: 'NULL', negLimit: 'NULL', home: 'NULL', idxSrc: 'NULL', idxIn: 'NULL' },
+    { name: 'C', type: 'linear', slot: 6, phys: 'NULL', posLimit: 'NULL', negLimit: 'NULL', home: 'NULL', idxSrc: 'NULL', idxIn: 'NULL' }
+  ];
+  for (let i = 1; i <= 25; i++) {
+    axes.push({ name: 'AUX' + i, type: 'linear', slot: 6 + i, phys: 'NULL', posLimit: 'NULL', negLimit: 'NULL', home: 'NULL', idxSrc: 'NULL', idxIn: 'NULL', userAdded: false });
+  }
+  return axes;
+}
+function makeDefaultConfigData() {
+  return {
+  controller: { channelCount: 2, logicalAxesPerChannel: 32 },
+  common: {
+    commands: [
+      { bit: 'C0.0', diIndex: 0, name: 'EMERGENCY_STOP', chinese_name: '5oCl5YGc', trigger: 'LEVEL_HIGH' },
+      { bit: 'C0.1', diIndex: 1, name: 'SAFETY_DOOR_OPEN', chinese_name: '5a6J5YWo6Zeo5omT5byA', trigger: 'LEVEL_HIGH' },
+      { bit: 'C0.2', diIndex: 2, name: 'SERVO_READY', chinese_name: '5Ly65pyN5bCx57uq', trigger: 'LEVEL_HIGH' },
+      { bit: 'C0.3', diIndex: 3, name: 'CONTACTOR_FEEDBACK', chinese_name: '5o6l6Kem5Zmo5Y+N6aaI', trigger: 'LEVEL_HIGH' },
+      { bit: 'C0.4', diIndex: 4, name: 'RESET_ALL', chinese_name: '5YWo6YOo5aSN5L2N', trigger: 'RISE_EDGE' }
+    ],
+    status: [
+      { bit: 'S0.0', doIndex: 0, name: 'SERVO_ENABLE_REQUEST', chinese_name: '5Ly65pyN5L2/6IO96K+35rGC' },
+      { bit: 'S0.1', doIndex: 1, name: 'FIXTURE_CLAMP', chinese_name: '5aS55YW35aS557Sn' },
+      { bit: 'S0.2', doIndex: 2, name: 'CONTROLLER_READY', chinese_name: '5o6n5Yi25Zmo5bCx57uq' },
+      { bit: 'S0.3', doIndex: 3, name: 'ANY_CHANNEL_RUNNING', chinese_name: '5Lu75oSP6YCa6YGT6L+Q6KGM5Lit' },
+      { bit: 'S0.4', doIndex: 4, name: 'ANY_CHANNEL_PAUSED', chinese_name: '5Lu75oSP6YCa6YGT5pqC5YGc' },
+      { bit: 'S0.5', doIndex: 5, name: 'ANY_CHANNEL_COMPLETED', chinese_name: '5Lu75oSP6YCa6YGT5a6M5oiQ' },
+      { bit: 'S0.6', doIndex: 6, name: 'SYSTEM_ALARM_ACTIVE', chinese_name: '57O757uf5oql6K2m5r+A5rS7' },
+      { bit: 'S0.7', doIndex: 7, name: 'ESTOP_ACTIVE', chinese_name: '5oCl5YGc5r+A5rS7' },
+      { bit: 'S0.8', doIndex: 8, name: 'ALL_CHANNELS_HOMED', chinese_name: '5YWo6YOo6YCa6YGT5bey5Zue6Zu2' },
+      { bit: 'S0.9', doIndex: 9, name: 'ALL_CHANNELS_SERVO_ENABLED', chinese_name: '5YWo6YOo6YCa6YGT5Ly65pyN5bey5L2/6IO9' },
+      { bit: 'S0.10', doIndex: 10, name: 'ANY_AXIS_MOVING', chinese_name: '5Lu75oSP6L206L+Q5Yqo5Lit' },
+      { bit: 'S0.11', doIndex: 11, name: 'ALL_CHANNELS_IN_POSITION', chinese_name: '5YWo6YOo6YCa6YGT5bey5Yiw5L2N' },
+      { bit: 'S0.12', doIndex: 12, name: 'ANY_SPINDLE_RUNNING', chinese_name: '5Lu75oSP5Li76L206L+Q6KGM5Lit' },
+      { bit: 'S0.13', doIndex: 13, name: 'SAFETY_DOOR_OPEN', chinese_name: '5a6J5YWo6Zeo5omT5byA' },
+      { bit: 'S0.14', doIndex: 14, name: 'IO_BUS_READY', chinese_name: 'SU/mgLvnur/lsLHnu6o=' },
+      { bit: 'S0.15', doIndex: 15, name: 'ALL_SPINDLES_READY', chinese_name: '5YWo6YOo5Li76L205bCx57uq' },
+      { bit: 'S0.16', doIndex: 16, name: 'ANY_SPINDLE_AT_SPEED', chinese_name: '5Lu75oSP5Li76L205bey6L6+6YCf' },
+      { bit: 'S0.17', doIndex: 17, name: 'ANY_SPINDLE_ALARM', chinese_name: '5Lu75oSP5Li76L205oql6K2m' }
+    ],
+    userCommands: [],
+    userStatus: []
+  },
+  channels: [
+    {
+      id: 1, probeInput: 'I1244',
+      trajectory: { velocity: 200.0, acceleration: 800.0, jerk: 8000.0, tolerance: 0.05 },
+      axes: makeChannelAxes(0, 100),
+      commands: [
+        { bit: 'C1.0', diIndex: null, name: 'RESET', chinese_name: '5aSN5L2N', trigger: 'RISE_EDGE' },
+        { bit: 'C1.1', diIndex: null, name: 'CYCLE_START', chinese_name: '5b6q546v5ZCv5Yqo', trigger: 'RISE_EDGE' },
+        { bit: 'C1.2', diIndex: null, name: 'FEED_HOLD', chinese_name: '6L+b57uZ5L+d5oyB', trigger: 'LEVEL_HIGH' },
+        { bit: 'C1.3', diIndex: null, name: 'CYCLE_STOP', chinese_name: '5b6q546v5YGc5q2i', trigger: 'RISE_EDGE' },
+        { bit: 'C1.4', diIndex: null, name: 'HOME_ALL', chinese_name: '5YWo6YOo5Zue6Zu2', trigger: 'RISE_EDGE' },
+        { bit: 'C1.5', diIndex: null, name: 'SERVO_ENABLE_REQUEST', chinese_name: '5Ly65pyN5L2/6IO96K+35rGC', trigger: 'LEVEL_HIGH' },
+        { bit: 'C1.6', diIndex: null, name: 'SINGLE_BLOCK', chinese_name: '5Y2V5q61', trigger: 'LEVEL_HIGH' },
+        { bit: 'C1.7', diIndex: null, name: 'OPTIONAL_STOP', chinese_name: '6YCJ5oup5YGc5q2i', trigger: 'LEVEL_HIGH' },
+        { bit: 'C1.8', diIndex: null, name: 'BLOCK_SKIP', chinese_name: '56iL5bqP5q616Lez6L+H', trigger: 'LEVEL_HIGH' },
+        { bit: 'C1.9', diIndex: null, name: 'M_CODE_FINISHED', chinese_name: 'TeS7o+eggeWujOaIkA==', trigger: 'RISE_EDGE' },
+        { bit: 'C1.10', diIndex: null, name: 'TOOL_CHANGE_FINISHED', chinese_name: '5o2i5YiA5a6M5oiQ', trigger: 'RISE_EDGE' },
+        { bit: 'C1.11', diIndex: null, name: 'SPINDLE_COMMAND_FINISHED', chinese_name: '5Li76L205oyH5Luk5a6M5oiQ', trigger: 'RISE_EDGE' }
+      ],
+      status: [
+        { bit: 'S1.0', doIndex: null, name: 'READY', chinese_name: '5bCx57uq' },
+        { bit: 'S1.1', doIndex: null, name: 'PROGRAM_RUNNING', chinese_name: '56iL5bqP6L+Q6KGM5Lit' },
+        { bit: 'S1.2', doIndex: null, name: 'PROGRAM_PAUSED', chinese_name: '56iL5bqP5pqC5YGc' },
+        { bit: 'S1.3', doIndex: null, name: 'PROGRAM_COMPLETED', chinese_name: '56iL5bqP5a6M5oiQ' },
+        { bit: 'S1.4', doIndex: null, name: 'ALARM_ACTIVE', chinese_name: '5oql6K2m5r+A5rS7' },
+        { bit: 'S1.5', doIndex: null, name: 'SAFETY_STOP_ACTIVE', chinese_name: '5a6J5YWo5YGc5q2i5r+A5rS7' },
+        { bit: 'S1.6', doIndex: null, name: 'HOMED', chinese_name: '5bey5Zue6Zu2' },
+        { bit: 'S1.7', doIndex: null, name: 'SERVO_ENABLED', chinese_name: '5Ly65pyN5bey5L2/6IO9' },
+        { bit: 'S1.8', doIndex: null, name: 'AXIS_MOVING', chinese_name: '6L206L+Q5Yqo5Lit' },
+        { bit: 'S1.9', doIndex: null, name: 'IN_POSITION', chinese_name: '5bey5Yiw5L2N' },
+        { bit: 'S1.10', doIndex: null, name: 'SPINDLE_RUNNING', chinese_name: '5Li76L206L+Q6KGM5Lit' },
+        { bit: 'S1.11', doIndex: null, name: 'WAITING', chinese_name: '562J5b6F5Lit' },
+        { bit: 'S1.12', doIndex: null, name: 'PROGRAM_FAILED', chinese_name: '56iL5bqP5aSx6LSl' },
+        { bit: 'S1.13', doIndex: null, name: 'SPINDLE_READY', chinese_name: '5Li76L205bCx57uq' },
+        { bit: 'S1.14', doIndex: null, name: 'SPINDLE_AT_SPEED', chinese_name: '5Li76L205bey6L6+6YCf' },
+        { bit: 'S1.15', doIndex: null, name: 'SPINDLE_ALARM', chinese_name: '5Li76L205oql6K2m' }
+      ],
+      userCommands: [],
+      userStatus: []
+    },
+    {
+      id: 2, probeInput: 'I2244',
+      trajectory: { velocity: 200.0, acceleration: 800.0, jerk: 8000.0, tolerance: 0.05 },
+      axes: makeChannelAxes(1, 200),
+      commands: [
+        { bit: 'C2.0', diIndex: null, name: 'RESET', chinese_name: '5aSN5L2N', trigger: 'RISE_EDGE' },
+        { bit: 'C2.1', diIndex: null, name: 'CYCLE_START', chinese_name: '5b6q546v5ZCv5Yqo', trigger: 'RISE_EDGE' },
+        { bit: 'C2.2', diIndex: null, name: 'FEED_HOLD', chinese_name: '6L+b57uZ5L+d5oyB', trigger: 'LEVEL_HIGH' },
+        { bit: 'C2.3', diIndex: null, name: 'CYCLE_STOP', chinese_name: '5b6q546v5YGc5q2i', trigger: 'RISE_EDGE' },
+        { bit: 'C2.4', diIndex: null, name: 'HOME_ALL', chinese_name: '5YWo6YOo5Zue6Zu2', trigger: 'RISE_EDGE' },
+        { bit: 'C2.5', diIndex: null, name: 'SERVO_ENABLE_REQUEST', chinese_name: '5Ly65pyN5L2/6IO96K+35rGC', trigger: 'LEVEL_HIGH' },
+        { bit: 'C2.6', diIndex: null, name: 'SINGLE_BLOCK', chinese_name: '5Y2V5q61', trigger: 'LEVEL_HIGH' },
+        { bit: 'C2.7', diIndex: null, name: 'OPTIONAL_STOP', chinese_name: '6YCJ5oup5YGc5q2i', trigger: 'LEVEL_HIGH' },
+        { bit: 'C2.8', diIndex: null, name: 'BLOCK_SKIP', chinese_name: '56iL5bqP5q616Lez6L+H', trigger: 'LEVEL_HIGH' },
+        { bit: 'C2.9', diIndex: null, name: 'M_CODE_FINISHED', chinese_name: 'TeS7o+eggeWujOaIkA==', trigger: 'RISE_EDGE' },
+        { bit: 'C2.10', diIndex: null, name: 'TOOL_CHANGE_FINISHED', chinese_name: '5o2i5YiA5a6M5oiQ', trigger: 'RISE_EDGE' },
+        { bit: 'C2.11', diIndex: null, name: 'SPINDLE_COMMAND_FINISHED', chinese_name: '5Li76L205oyH5Luk5a6M5oiQ', trigger: 'RISE_EDGE' }
+      ],
+      status: [
+        { bit: 'S2.0', doIndex: null, name: 'READY', chinese_name: '5bCx57uq' },
+        { bit: 'S2.1', doIndex: null, name: 'PROGRAM_RUNNING', chinese_name: '56iL5bqP6L+Q6KGM5Lit' },
+        { bit: 'S2.2', doIndex: null, name: 'PROGRAM_PAUSED', chinese_name: '56iL5bqP5pqC5YGc' },
+        { bit: 'S2.3', doIndex: null, name: 'PROGRAM_COMPLETED', chinese_name: '56iL5bqP5a6M5oiQ' },
+        { bit: 'S2.4', doIndex: null, name: 'ALARM_ACTIVE', chinese_name: '5oql6K2m5r+A5rS7' },
+        { bit: 'S2.5', doIndex: null, name: 'SAFETY_STOP_ACTIVE', chinese_name: '5a6J5YWo5YGc5q2i5r+A5rS7' },
+        { bit: 'S2.6', doIndex: null, name: 'HOMED', chinese_name: '5bey5Zue6Zu2' },
+        { bit: 'S2.7', doIndex: null, name: 'SERVO_ENABLED', chinese_name: '5Ly65pyN5bey5L2/6IO9' },
+        { bit: 'S2.8', doIndex: null, name: 'AXIS_MOVING', chinese_name: '6L206L+Q5Yqo5Lit' },
+        { bit: 'S2.9', doIndex: null, name: 'IN_POSITION', chinese_name: '5bey5Yiw5L2N' },
+        { bit: 'S2.10', doIndex: null, name: 'SPINDLE_RUNNING', chinese_name: '5Li76L206L+Q6KGM5Lit' },
+        { bit: 'S2.11', doIndex: null, name: 'WAITING', chinese_name: '562J5b6F5Lit' },
+        { bit: 'S2.12', doIndex: null, name: 'PROGRAM_FAILED', chinese_name: '56iL5bqP5aSx6LSl' },
+        { bit: 'S2.13', doIndex: null, name: 'SPINDLE_READY', chinese_name: '5Li76L205bCx57uq' },
+        { bit: 'S2.14', doIndex: null, name: 'SPINDLE_AT_SPEED', chinese_name: '5Li76L205bey6L6+6YCf' },
+        { bit: 'S2.15', doIndex: null, name: 'SPINDLE_ALARM', chinese_name: '5Li76L205oql6K2m' }
+      ],
+      userCommands: [],
+      userStatus: []
+    }
+  ]
+  };
+}
+let configData = makeDefaultConfigData();
+
+// ==================== BINDING RESOURCES (from Vue parent) ====================
+// Axis/IO parse+normalize lives in src/iniBinding.js. Parent posts already-normalized
+// axisBindings / ioBindings; this page only consumes them for dropdowns.
+let bindingResources = { loaded: false, di: [], do: [], axes: [] };
+window.__zmAxisBindings = [];
+window.__zmIoBindings = [];
+
+function asTrimmedString(value, fallback = '') {
+  if (value === null || value === undefined) return fallback;
+  return String(value).trim();
+}
+function toNullableInt(value) {
+  if (value === null || value === undefined || value === '') return null;
+  if (typeof value === 'number' && Number.isFinite(value)) return Math.trunc(value);
+  const n = Number.parseInt(String(value).trim(), 10);
+  return Number.isFinite(n) ? n : null;
+}
+function parseIniNumber(raw) {
+  const text = asTrimmedString(raw, '');
+  if (!text) return null;
+  const value = Number(text);
+  return Number.isFinite(value) ? value : null;
+}
+// Minimal INI splitter for CNC Lite sections (COMMON_* / CHANNEL_*), not binding sections.
+function parseIniSections(text) {
+  const sections = new Map();
+  let current = null;
+  String(text || '').split(/\r?\n/).forEach(rawLine => {
+    const line = rawLine.trim();
+    if (!line || line.startsWith(';') || line.startsWith('#')) return;
+    const sectionMatch = /^\[([^\]]+)\]$/.exec(line);
+    if (sectionMatch) {
+      const name = sectionMatch[1].trim().toLowerCase();
+      current = sections.get(name) || new Map();
+      sections.set(name, current);
+      return;
+    }
+    if (!current) return;
+    const separator = line.indexOf('=');
+    if (separator < 1) return;
+    const key = line.slice(0, separator).trim().toLowerCase();
+    if (key) current.set(key, line.slice(separator + 1).trim());
+  });
+  return sections;
+}
+
+function isConfiguredIoBinding(row) {
+  if (!row) return false;
+  const kind = asTrimmedString(row.kind, '').toLowerCase();
+  const portNum = toNullableInt(row.portNum);
+  if ((kind !== 'di' && kind !== 'do') || portNum === null || portNum < 0 || portNum > 255) return false;
+  if (row.source === 'virtual' || row.source === 'nop') return true;
+  if (row.source !== 'pdo') return false;
+  if (row.slaveIdx == null || row.index == null || row.subindex == null) return false;
+  const mask = toNullableInt(row.mask);
+  return mask !== null && mask > 0;
+}
+
+// ==================== CNC INI IMPORT (round-trip of buildCncIniText) ====================
+// 检测并解析 CNC Lite 段（[COMMON_COMMANDS]/[COMMON_STATUS]/[CHANNEL_n*]），
+// 在默认配置之上覆盖 INI 值；非 CNC INI 返回 false 且不改动 configData。
+function applyCncIniText(text) {
+  const sections = parseIniSections(text);
+  const hasCnc = sections.has('common_commands') || sections.has('common_status') ||
+    configData.channels.some((ch, i) => sections.has('channel_' + (i + 1) + '_commands') || sections.has('channel_' + (i + 1) + '_axes'));
+  if (!sections.size || !hasCnc) return false;
+  const fresh = makeDefaultConfigData();
+  applyCncCommandSection(sections.get('common_commands'), fresh.common);
+  applyCncStatusSection(sections.get('common_status'), fresh.common);
+  fresh.channels.forEach((ch, i) => {
+    const n = i + 1;
+    applyCncTrajectorySection(sections.get('channel_' + n + '_trajectory'), ch);
+    applyCncAxesSection(sections.get('channel_' + n + '_axes'), ch);
+    applyCncCommandSection(sections.get('channel_' + n + '_commands'), ch);
+    applyCncStatusSection(sections.get('channel_' + n + '_status'), ch);
+  });
+  configData = fresh;
+  return true;
+}
+function applyCncCommandSection(section, target) {
+  if (!section) return;
+  const rows = new Map();
+  section.forEach((value, key) => {
+    const m = /^c(\d+)\.(\d+)\.(di_index|name|chinese_name|trigger)$/.exec(key);
+    if (!m) return;
+    const bit = 'C' + m[1] + '.' + m[2];
+    const row = rows.get(bit) || {};
+    if (m[3] === 'di_index') row.diIndex = parseAddrValue(value);
+    else if (m[3] === 'name') row.name = value;
+    else if (m[3] === 'chinese_name') row.chinese_name = value;
+    else row.trigger = value && value !== 'NULL' ? value : null;
+    rows.set(bit, row);
+  });
+  rows.forEach((row, bit) => {
+    const entry = [...target.commands, ...target.userCommands].find(e => e.bit === bit);
+    if (entry) {
+      // 系统命令仅恢复 DI 绑定，NAME/TRIGGER 为固定定义
+      if (row.diIndex !== undefined) entry.diIndex = row.diIndex;
+      return;
+    }
+    if (row.name === undefined) return;
+    target.userCommands.push({
+      bit,
+      diIndex: row.diIndex !== undefined ? row.diIndex : null,
+      name: row.name,
+      chinese_name: row.chinese_name || '',
+      // 用户命令仅做 IO 板绑定，TRIGGER 固定为 NULL
+      trigger: null
+    });
+  });
+}
+function applyCncStatusSection(section, target) {
+  if (!section) return;
+  const rows = new Map();
+  section.forEach((value, key) => {
+    const m = /^s(\d+)\.(\d+)\.(do_index|name|chinese_name)$/.exec(key);
+    if (!m) return;
+    const bit = 'S' + m[1] + '.' + m[2];
+    const row = rows.get(bit) || {};
+    if (m[3] === 'do_index') row.doIndex = parseAddrValue(value);
+    else if (m[3] === 'name') row.name = value;
+    else row.chinese_name = value;
+    rows.set(bit, row);
+  });
+  rows.forEach((row, bit) => {
+    const entry = [...target.status, ...target.userStatus].find(e => e.bit === bit);
+    if (entry) {
+      if (row.doIndex !== undefined) entry.doIndex = row.doIndex;
+      return;
+    }
+    if (row.name === undefined) return;
+    target.userStatus.push({
+      bit,
+      doIndex: row.doIndex !== undefined ? row.doIndex : null,
+      name: row.name,
+      chinese_name: row.chinese_name || ''
+    });
+  });
+}
+function applyCncTrajectorySection(section, ch) {
+  if (!section) return;
+  const keyMap = { default_linear_velocity: 'velocity', default_linear_acceleration: 'acceleration', default_linear_jerk: 'jerk', path_tolerance: 'tolerance' };
+  section.forEach((value, key) => {
+    const k = keyMap[key];
+    if (!k) return;
+    const num = parseIniNumber(value);
+    if (num !== null) ch.trajectory[k] = num;
+  });
+}
+function applyCncAxesSection(section, ch) {
+  if (!section) return;
+  const propMap = { logical_slot: 'slot', physical_axis: 'phys', positive_limit_input: 'posLimit', negative_limit_input: 'negLimit', home_switch_input: 'home', index_source: 'idxSrc', index_input: 'idxIn' };
+  section.forEach((value, key) => {
+    const m = /^([a-z0-9_]+)\.([a-z_]+)$/.exec(key);
+    if (!m) return;
+    const axis = ch.axes.find(a => a.name.toLowerCase() === m[1]);
+    if (!axis) return;
+    const prop = propMap[m[2]];
+    if (!prop) return;
+    if (prop === 'slot') {
+      const n = parseIniNumber(value);
+      if (n !== null) axis.slot = Math.trunc(n);
+    } else if (prop === 'phys') {
+      const n = toNullableInt(value);
+      axis.phys = n !== null ? n : 'NULL';
+      // AUX 轴出现在 INI 且已绑定 -> 视为用户已添加
+      if (n !== null && axis.name.startsWith('AUX')) axis.userAdded = true;
+    } else {
+      axis[prop] = value && value !== 'NULL' ? value : 'NULL';
+    }
+  });
+}
+function uniqueSortedNumbers(values) {
+  return [...new Set(values.filter(Number.isInteger))].sort((a, b) => a - b);
+}
+function deriveBindingResources(axisBindings, ioBindings) {
+  const io = Array.isArray(ioBindings) ? ioBindings : [];
+  const axes = Array.isArray(axisBindings) ? axisBindings : [];
+  return {
+    loaded: true,
+    di: uniqueSortedNumbers(io.filter(row => asTrimmedString(row.kind, '').toLowerCase() === 'di' && isConfiguredIoBinding(row)).map(row => toNullableInt(row.portNum))),
+    do: uniqueSortedNumbers(io.filter(row => asTrimmedString(row.kind, '').toLowerCase() === 'do' && isConfiguredIoBinding(row)).map(row => toNullableInt(row.portNum))),
+    // PHYSICAL_AXIS options follow parent axis_num (axisBindings length): 0..n-1
+    axes: Array.from({ length: axes.length }, (_, i) => i)
+  };
+}
+function refreshBindingResources() {
+  bindingResources = deriveBindingResources(window.__zmAxisBindings, window.__zmIoBindings);
+  applyBindingResourceConstraints();
+  return bindingResources;
+}
+function hasConfiguredAddress(fieldType, idx) {
+  const list = fieldType === 'DI' ? bindingResources.di : bindingResources.do;
+  return Number.isInteger(idx) && list.includes(idx);
+}
+function hasConfiguredAxis(idx) {
+  return Number.isInteger(idx) && bindingResources.axes.includes(idx);
+}
+// PHYSICAL_AXIS 全局互斥：已被任一逻辑轴绑定的物理轴号不再出现在其他下拉框
+function getGlobalUsedAxes() {
+  const u = new Set();
+  configData.channels.forEach(ch => {
+    ch.axes.forEach(axis => {
+      const idx = toNullableInt(axis.phys);
+      if (idx !== null) u.add(idx);
+    });
+  });
+  return u;
+}
+function coerceAddressToConfigured(fieldType, idx) {
+  return hasConfiguredAddress(fieldType, idx) ? idx : null;
+}
+function coerceAxisToConfigured(value) {
+  const idx = toNullableInt(value);
+  return hasConfiguredAxis(idx) ? idx : 'NULL';
+}
+function applyBindingResourceConstraints() {
+  configData.common.commands.concat(configData.common.userCommands).forEach(c => { c.diIndex = coerceAddressToConfigured('DI', c.diIndex); });
+  configData.common.status.concat(configData.common.userStatus).forEach(s => { s.doIndex = coerceAddressToConfigured('DO', s.doIndex); });
+  configData.channels.forEach(ch => {
+    ch.commands.concat(ch.userCommands).forEach(c => { c.diIndex = coerceAddressToConfigured('DI', c.diIndex); });
+    ch.status.concat(ch.userStatus).forEach(s => { s.doIndex = coerceAddressToConfigured('DO', s.doIndex); });
+    ch.axes.forEach(axis => {
+      axis.phys = coerceAxisToConfigured(axis.phys);
+      ['posLimit', 'negLimit', 'home', 'idxIn'].forEach(key => {
+        const idx = parseAddrValue(axis[key]);
+        axis[key] = hasConfiguredAddress('DI', idx) ? 'I' + idx : 'NULL';
+      });
+    });
+  });
+}
+function renderAllConfig() {
+  renderCommonCommands();
+  renderCommonStatus();
+  renderChannel(0);
+  renderChannel(1);
+}
+
+// ==================== RENDER HELPERS ====================
+function addrBadge(addr) {
+  return '<span class="badge badge-blue">' + addr + '</span>';
+}
+
+function triggerBadge(trigger) {
+  const map = {
+    'RISE_EDGE': ['RISE_EDGE', 'badge-orange'],
+    'FALL_EDGE': ['FALL_EDGE', 'badge-purple'],
+    'LEVEL_HIGH': ['LEVEL_HIGH', 'badge-teal'],
+    'LEVEL_LOW': ['LEVEL_LOW', 'badge-blue']
+  };
+  const [label, cls] = map[trigger] || [trigger || 'NULL', 'badge-gray'];
+  return '<span class="badge ' + cls + '">' + label + '</span>';
+}
+
+function utf8ToBase64(str) {
+  if (!str) return '';
+  try {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+      return String.fromCharCode('0x' + p1);
+    }));
+  } catch (e) { return ''; }
+}
+function base64ToUtf8(str) {
+  if (!str) return '';
+  try {
+    return decodeURIComponent(atob(str).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+  } catch (e) { return ''; }
+}
+function displayChineseName(b64) {
+  return base64ToUtf8(b64 || '');
+}
+
+// ==================== USER ENTRY HELPERS ====================
+function getChNum(scope) { return scope === 'common' ? 0 : scope + 1; }
+function getUserBitRange(scope) { return scope === 'common' ? { first: 128, last: 255 } : { first: 32, last: 255 }; }
+function getUserDIRanges(scope) {
+  if (scope === 'common') return [[4,31],[33,255]];
+  const b = scope === 0 ? 1000 : 2000;
+  return [[b+9,b+31],[b+44,b+243],[b+245,b+255]];
+}
+function getUserDORanges(scope) {
+  if (scope === 'common') return [[2,31],[48,255]];
+  const b = scope === 0 ? 1000 : 2000;
+  return [[b,b+31],[b+48,b+255]];
+}
+// 轴配置仍按通道隔离（保留原范围）
+function getUsedDI(scope) {
+  const u = new Set();
+  if (scope === 'common') {
+    configData.common.commands.forEach(c => u.add(c.diIndex));
+    configData.common.userCommands.forEach(c => u.add(c.diIndex));
+  } else {
+    configData.channels[scope].commands.forEach(c => u.add(c.diIndex));
+    configData.channels[scope].userCommands.forEach(c => u.add(c.diIndex));
+  }
+  return u;
+}
+function getUsedDO(scope) {
+  const u = new Set();
+  if (scope === 'common') {
+    configData.common.status.forEach(s => u.add(s.doIndex));
+    configData.common.userStatus.forEach(s => u.add(s.doIndex));
+  } else {
+    configData.channels[scope].status.forEach(s => u.add(s.doIndex));
+    configData.channels[scope].userStatus.forEach(s => u.add(s.doIndex));
+  }
+  return u;
+}
+// CNC Lite 下拉框只使用 web_client 已配置/绑定的 IO 与轴号。
+function getConfiguredAddressList(fieldType) { return fieldType === 'DI' ? bindingResources.di : bindingResources.do; }
+function getGlobalUsedDI() {
+  const u = new Set();
+  configData.common.commands.forEach(c => { if (c.diIndex !== null && c.diIndex !== undefined && !isNaN(c.diIndex)) u.add(c.diIndex); });
+  configData.common.userCommands.forEach(c => { if (c.diIndex !== null && c.diIndex !== undefined && !isNaN(c.diIndex)) u.add(c.diIndex); });
+  configData.channels.forEach(ch => {
+    ch.commands.forEach(c => { if (c.diIndex !== null && c.diIndex !== undefined && !isNaN(c.diIndex)) u.add(c.diIndex); });
+    ch.userCommands.forEach(c => { if (c.diIndex !== null && c.diIndex !== undefined && !isNaN(c.diIndex)) u.add(c.diIndex); });
+    // 轴限位/原点输入也纳入全局 DI 占用池
+    ch.axes.forEach(axis => {
+      ['posLimit','negLimit','home','idxIn'].forEach(key => {
+        const idx = parseAddrValue(axis[key]);
+        if (idx !== null && !isNaN(idx)) u.add(idx);
+      });
+    });
+  });
+  return u;
+}
+function getGlobalUsedDO() {
+  const u = new Set();
+  configData.common.status.forEach(s => { if (s.doIndex !== null && s.doIndex !== undefined && !isNaN(s.doIndex)) u.add(s.doIndex); });
+  configData.common.userStatus.forEach(s => { if (s.doIndex !== null && s.doIndex !== undefined && !isNaN(s.doIndex)) u.add(s.doIndex); });
+  configData.channels.forEach(ch => {
+    ch.status.forEach(s => { if (s.doIndex !== null && s.doIndex !== undefined && !isNaN(s.doIndex)) u.add(s.doIndex); });
+    ch.userStatus.forEach(s => { if (s.doIndex !== null && s.doIndex !== undefined && !isNaN(s.doIndex)) u.add(s.doIndex); });
+  });
+  return u;
+}
+function isValidGlobalDI(idx) { return hasConfiguredAddress('DI', idx); }
+function isValidGlobalDO(idx) { return hasConfiguredAddress('DO', idx); }
+function nextGlobalDI() {
+  const used = getGlobalUsedDI();
+  return bindingResources.di.find(i => !used.has(i)) ?? null;
+}
+function nextGlobalDO() {
+  const used = getGlobalUsedDO();
+  return bindingResources.do.find(i => !used.has(i)) ?? null;
+}
+function nextBit(scope, type) {
+  const chNum = getChNum(scope);
+  const r = getUserBitRange(scope);
+  const prefix = (type === 'cmd' ? 'C' : 'S') + chNum;
+  const sysArr = scope === 'common' ? (type === 'cmd' ? configData.common.commands : configData.common.status) : (type === 'cmd' ? configData.channels[scope].commands : configData.channels[scope].status);
+  const usrArr = scope === 'common' ? (type === 'cmd' ? configData.common.userCommands : configData.common.userStatus) : (type === 'cmd' ? configData.channels[scope].userCommands : configData.channels[scope].userStatus);
+  const all = [...sysArr, ...usrArr];
+  for (let i = r.first; i <= r.last; i++) { if (!all.some(e => parseInt(e.bit.split('.')[1]) === i)) return i; }
+  return r.first;
+}
+function isValidDI(scope, idx) { return getUserDIRanges(scope).some(([s,e]) => idx >= s && idx <= e); }
+function isValidDO(scope, idx) { return getUserDORanges(scope).some(([s,e]) => idx >= s && idx <= e); }
+function fid(scope, type) { return (scope === 'common' ? 'common' : 'ch' + (scope+1)) + type; }
+function buildAddrOptions(scope, fieldType, currentVal, allowNull) {
+  const used = fieldType === 'DI' ? getGlobalUsedDI() : getGlobalUsedDO();
+  const prefix = fieldType === 'DI' ? 'I' : 'O';
+  const configured = getConfiguredAddressList(fieldType);
+  let currentNum = NaN;
+  if (typeof currentVal === 'number') currentNum = currentVal;
+  else if (typeof currentVal === 'string') {
+    const m = currentVal.match(/^([IO])(\d+)$/);
+    if (m) currentNum = parseInt(m[2]);
+    else currentNum = parseInt(currentVal);
+  }
+  const hasCurrent = configured.includes(currentNum);
+  let html = '';
+  if (allowNull) html += '<option value="NULL"' + (!hasCurrent ? ' selected' : '') + '>null</option>';
+  if (!hasCurrent && !allowNull) {
+    const text = Number.isInteger(currentNum) ? prefix + currentNum + '（未绑定）' : '请选择已配置' + fieldType;
+    html += '<option value="" selected disabled>' + text + '</option>';
+  }
+  configured.forEach(i => {
+    if (!used.has(i) || i === currentNum) {
+      html += '<option value="' + prefix + i + '"' + (i === currentNum ? ' selected' : '') + '>' + prefix + i + '</option>';
+    }
+  });
+  return html || '<option value="" selected disabled>无已配置' + fieldType + '</option>';
+}
+
+// ==================== ADD FORM SHOW/HIDE ====================
+function showAddCmd(scope) {
+  const id = fid(scope, 'Cmd');
+  document.getElementById(id + 'AddForm').style.display = '';
+  document.getElementById(id + 'Bit').value = nextBit(scope, 'cmd');
+  // DI 默认保持 null，用户可稍后在行内下拉框再绑定
+  document.getElementById(id + 'Name').value = '';
+  document.getElementById(id + 'ChineseName').value = '';
+  document.getElementById(id + 'Name').focus();
+}
+function showAddStatus(scope) {
+  const id = fid(scope, 'Status');
+  document.getElementById(id + 'AddForm').style.display = '';
+  document.getElementById(id + 'Bit').value = nextBit(scope, 'status');
+  // DO 默认保持 null
+  document.getElementById(id + 'Name').value = '';
+  document.getElementById(id + 'ChineseName').value = '';
+  document.getElementById(id + 'Name').focus();
+}
+function hideAddForm(id) { document.getElementById(id).style.display = 'none'; }
+function hideAddAxisForm(channelIdx) {
+  const prefix = 'ch' + (channelIdx + 1);
+  document.querySelectorAll('#' + prefix + 'AxesTable .add-form-row').forEach(tr => tr.style.display = 'none');
+}
+function parseAddrValue(value) {
+  if (value === null || value === undefined || value === '' || value === 'NULL') return null;
+  const m = String(value).match(/^([IO])?(\d+)$/);
+  return m ? parseInt(m[2]) : null;
+}
+function updateSystemCmdDI(scope, idx, value) {
+  const diIndex = parseAddrValue(value);
+  const holder = scope === 'common' ? configData.common.commands[idx] : configData.channels[scope].commands[idx];
+  const prev = holder.diIndex;
+  if (diIndex !== null && diIndex !== prev && getGlobalUsedDI().has(diIndex)) { alert('DI_INDEX I' + diIndex + ' 已被其他命令/轴占用'); renderAllConfig(); return; }
+  holder.diIndex = diIndex;
+  renderAllConfig();
+}
+function updateUserCmdDI(scope, idx, value) {
+  const diIndex = parseAddrValue(value);
+  const holder = scope === 'common' ? configData.common.userCommands[idx] : configData.channels[scope].userCommands[idx];
+  const prev = holder.diIndex;
+  if (diIndex !== null && diIndex !== prev && getGlobalUsedDI().has(diIndex)) { alert('DI_INDEX I' + diIndex + ' 已被其他命令/轴占用'); renderAllConfig(); return; }
+  holder.diIndex = diIndex;
+  renderAllConfig();
+}
+function updateSystemStatusDO(scope, idx, value) {
+  const doIndex = parseAddrValue(value);
+  const holder = scope === 'common' ? configData.common.status[idx] : configData.channels[scope].status[idx];
+  const prev = holder.doIndex;
+  if (doIndex !== null && doIndex !== prev && getGlobalUsedDO().has(doIndex)) { alert('DO_INDEX O' + doIndex + ' 已被其他状态占用'); renderAllConfig(); return; }
+  holder.doIndex = doIndex;
+  renderAllConfig();
+}
+function updateUserStatusDO(scope, idx, value) {
+  const doIndex = parseAddrValue(value);
+  const holder = scope === 'common' ? configData.common.userStatus[idx] : configData.channels[scope].userStatus[idx];
+  const prev = holder.doIndex;
+  if (doIndex !== null && doIndex !== prev && getGlobalUsedDO().has(doIndex)) { alert('DO_INDEX O' + doIndex + ' 已被其他状态占用'); renderAllConfig(); return; }
+  holder.doIndex = doIndex;
+  renderAllConfig();
+}
+function updateAddr(id, fieldType) {
+  const v = document.getElementById(id + fieldType).value;
+  const el = document.getElementById(id + 'Addr');
+  const prefix = fieldType === 'DI' ? 'I' : 'O';
+  if (v && v > 0) el.innerHTML = addrBadge(prefix + v); else el.textContent = '-';
+}
+
+// ==================== CONFIRM ADD ====================
+function confirmAddCmd(scope) {
+  const id = fid(scope, 'Cmd');
+  const bitNum = parseInt(document.getElementById(id + 'Bit').value);
+  const diIndex = parseAddrValue(document.getElementById(id + 'DI').value);
+  const name = document.getElementById(id + 'Name').value.trim();
+  const chineseNameRaw = document.getElementById(id + 'ChineseName').value.trim();
+  // 用户命令仅做 IO 板绑定，TRIGGER 固定为 NULL
+  const trigger = null;
+  const chNum = getChNum(scope);
+  const r = getUserBitRange(scope);
+  if (isNaN(bitNum) || bitNum < r.first || bitNum > r.last) { alert('命令位必须在 ' + r.first + ' ~ ' + r.last + ' 范围内'); return; }
+  if (diIndex !== null && !isValidGlobalDI(diIndex)) { alert('DI_INDEX 必须选择 web_client 已配置的 DI'); return; }
+  if (!name) { alert('请输入 NAME'); return; }
+  const allCmds = scope === 'common' ? [...configData.common.commands, ...configData.common.userCommands] : [...configData.channels[scope].commands, ...configData.channels[scope].userCommands];
+  if (allCmds.some(c => parseInt(c.bit.split('.')[1]) === bitNum)) { alert('命令位 C' + chNum + '.' + bitNum + ' 已存在'); return; }
+  if (diIndex !== null && getGlobalUsedDI().has(diIndex)) { alert('DI_INDEX I' + diIndex + ' 已被使用'); return; }
+  const entry = { bit: 'C' + chNum + '.' + bitNum, diIndex, name, chinese_name: utf8ToBase64(chineseNameRaw), trigger };
+  if (scope === 'common') configData.common.userCommands.push(entry); else configData.channels[scope].userCommands.push(entry);
+  renderAllConfig();
+}
+function confirmAddStatus(scope) {
+  const id = fid(scope, 'Status');
+  const bitNum = parseInt(document.getElementById(id + 'Bit').value);
+  const doIndex = parseAddrValue(document.getElementById(id + 'DO').value);
+  const name = document.getElementById(id + 'Name').value.trim();
+  const chineseNameRaw = document.getElementById(id + 'ChineseName').value.trim();
+  const chNum = getChNum(scope);
+  const r = getUserBitRange(scope);
+  if (isNaN(bitNum) || bitNum < r.first || bitNum > r.last) { alert('状态位必须在 ' + r.first + ' ~ ' + r.last + ' 范围内'); return; }
+  if (doIndex !== null && !isValidGlobalDO(doIndex)) { alert('DO_INDEX 必须选择 web_client 已配置的 DO'); return; }
+  if (!name) { alert('请输入 NAME'); return; }
+  const allSt = scope === 'common' ? [...configData.common.status, ...configData.common.userStatus] : [...configData.channels[scope].status, ...configData.channels[scope].userStatus];
+  if (allSt.some(s => parseInt(s.bit.split('.')[1]) === bitNum)) { alert('状态位 S' + chNum + '.' + bitNum + ' 已存在'); return; }
+  if (doIndex !== null && getGlobalUsedDO().has(doIndex)) { alert('DO_INDEX O' + doIndex + ' 已被使用'); return; }
+  const entry = { bit: 'S' + chNum + '.' + bitNum, doIndex, name, chinese_name: utf8ToBase64(chineseNameRaw) };
+  if (scope === 'common') configData.common.userStatus.push(entry); else configData.channels[scope].userStatus.push(entry);
+  renderAllConfig();
+}
+// ==================== DELETE USER ENTRIES ====================
+function deleteUserCmd(scope, idx) {
+  if (scope === 'common') configData.common.userCommands.splice(idx, 1); else configData.channels[scope].userCommands.splice(idx, 1);
+  renderAllConfig();
+}
+function deleteUserStatus(scope, idx) {
+  if (scope === 'common') configData.common.userStatus.splice(idx, 1); else configData.channels[scope].userStatus.splice(idx, 1);
+  renderAllConfig();
+}
+
+// ==================== RENDER: COMMON COMMANDS ====================
+function renderCommonCommands() {
+  const tbody = document.querySelector('#commonCmdTable tbody');
+  let html = '';
+  configData.common.commands.forEach((c, idx) => {
+    html += '<tr><td class="mono" style="font-weight:600">' + c.bit + '</td><td class="mono"><select class="edit-input" onchange="updateSystemCmdDI(\'common\',' + idx + ',this.value)">' + buildAddrOptions('common', 'DI', c.diIndex, true) + '</select></td><td>' + c.name + '</td><td>' + displayChineseName(c.chinese_name) + '</td><td>' + triggerBadge(c.trigger) + '</td><td><span class="badge badge-gray">系统</span></td></tr>';
+  });
+  configData.common.userCommands.forEach((c, idx) => {
+    html += '<tr class="user-entry-row"><td class="mono" style="font-weight:600">' + c.bit + '</td><td class="mono"><select class="edit-input" onchange="updateUserCmdDI(\'common\',' + idx + ',this.value)">' + buildAddrOptions('common', 'DI', c.diIndex, true) + '</select></td><td>' + c.name + '</td><td>' + displayChineseName(c.chinese_name) + '</td><td>' + triggerBadge(c.trigger) + '</td><td style="white-space:nowrap"><span class="user-tag">用户</span> <button class="delete-btn" onclick="deleteUserCmd(\'common\',' + idx + ')">🗑 删除</button></td></tr>';
+  });
+  html += cmdAddFormHtml('common');
+  html += '<tr><td colspan="6" style="padding:8px 14px"><button class="add-row-btn" onclick="showAddCmd(\'common\')">+ 添加用户命令</button></td></tr>';
+  html += '<tr class="empty-row"><td colspan="6">C0.1 ~ C0.127 系统保留 · C0.128 ~ C0.255 用户自定义</td></tr>';
+  tbody.innerHTML = html;
+}
+function cmdAddFormHtml(scope) {
+  const chNum = getChNum(scope);
+  const id = fid(scope, 'Cmd');
+  const r = getUserBitRange(scope);
+  let html = '<tr class="add-form-row" id="' + id + 'AddForm" style="display:none">';
+  html += '<td><div style="display:flex;align-items:center;gap:2px"><span class="mono">C' + chNum + '.</span><input type="number" id="' + id + 'Bit" class="edit-input" style="width:55px" min="' + r.first + '" max="255"></div></td>';
+  html += '<td class="mono"><select id="' + id + 'DI" class="edit-input">' + buildAddrOptions(scope, 'DI', null, true) + '</select></td>';
+  html += '<td><input type="text" id="' + id + 'Name" class="edit-input" placeholder="MY_COMMAND"></td>';
+  html += '<td><input type="text" id="' + id + 'ChineseName" class="edit-input" placeholder="中文名"></td>';
+  html += '<td><select id="' + id + 'Trigger" class="edit-input" disabled title="用户命令仅做 IO 板绑定，无触发方式"><option value="" selected>NULL</option></select></td>';
+  html += '<td style="white-space:nowrap"><span class="user-tag">用户</span> <div class="add-form-actions" style="display:inline-flex"><button class="btn-sm btn-sm-confirm" onclick="confirmAddCmd(\'' + scope + '\')">✓ 确认</button><button class="btn-sm btn-sm-cancel" onclick="hideAddForm(\'' + id + 'AddForm\')">✕</button></div></td>';
+  html += '</tr>';
+  return html;
+}
+
+// ==================== RENDER: COMMON STATUS ====================
+function renderCommonStatus() {
+  const tbody = document.querySelector('#commonStatusTable tbody');
+  let html = '';
+  configData.common.status.forEach((s, idx) => {
+    html += '<tr><td class="mono" style="font-weight:600">' + s.bit + '</td><td class="mono"><select class="edit-input" onchange="updateSystemStatusDO(\'common\',' + idx + ',this.value)">' + buildAddrOptions('common', 'DO', s.doIndex, true) + '</select></td><td>' + s.name + '</td><td>' + displayChineseName(s.chinese_name) + '</td><td><span class="badge badge-gray">系统</span></td></tr>';
+  });
+  configData.common.userStatus.forEach((s, idx) => {
+    html += '<tr class="user-entry-row"><td class="mono" style="font-weight:600">' + s.bit + '</td><td class="mono"><select class="edit-input" onchange="updateUserStatusDO(\'common\',' + idx + ',this.value)">' + buildAddrOptions('common', 'DO', s.doIndex, true) + '</select></td><td>' + s.name + '</td><td>' + displayChineseName(s.chinese_name) + '</td><td style="white-space:nowrap"><span class="user-tag">用户</span> <button class="delete-btn" onclick="deleteUserStatus(\'common\',' + idx + ')">🗑 删除</button></td></tr>';
+  });
+  html += statusAddFormHtml('common');
+  html += '<tr><td colspan="5" style="padding:8px 14px"><button class="add-row-btn" onclick="showAddStatus(\'common\')">+ 添加用户状态</button></td></tr>';
+  html += '<tr class="empty-row"><td colspan="5">S0.16 ~ S0.127 系统保留 · S0.128 ~ S0.255 用户自定义</td></tr>';
+  tbody.innerHTML = html;
+}
+function statusAddFormHtml(scope) {
+  const chNum = getChNum(scope);
+  const id = fid(scope, 'Status');
+  const r = getUserBitRange(scope);
+  let html = '<tr class="add-form-row" id="' + id + 'AddForm" style="display:none">';
+  html += '<td><div style="display:flex;align-items:center;gap:2px"><span class="mono">S' + chNum + '.</span><input type="number" id="' + id + 'Bit" class="edit-input" style="width:55px" min="' + r.first + '" max="255"></div></td>';
+  html += '<td class="mono"><select id="' + id + 'DO" class="edit-input">' + buildAddrOptions(scope, 'DO', null, true) + '</select></td>';
+  html += '<td><input type="text" id="' + id + 'Name" class="edit-input" placeholder="MY_STATUS"></td>';
+  html += '<td><input type="text" id="' + id + 'ChineseName" class="edit-input" placeholder="中文名"></td>';
+  html += '<td style="white-space:nowrap"><span class="user-tag">用户</span> <div class="add-form-actions" style="display:inline-flex"><button class="btn-sm btn-sm-confirm" onclick="confirmAddStatus(\'' + scope + '\')">✓ 确认</button><button class="btn-sm btn-sm-cancel" onclick="hideAddForm(\'' + id + 'AddForm\')">✕</button></div></td>';
+  html += '</tr>';
+  return html;
+}
+
+function physOptions(selected, allowNull) {
+  const selectedNum = toNullableInt(selected);
+  const hasCurrent = hasConfiguredAxis(selectedNum);
+  const used = getGlobalUsedAxes();
+  let html = '';
+  if (allowNull) html += '<option value="NULL"' + (!hasCurrent ? ' selected' : '') + '>null</option>';
+  if (!hasCurrent && !allowNull) {
+    const text = Number.isInteger(selectedNum) ? selectedNum + '（未绑定）' : '请选择已绑定轴号';
+    html += '<option value="" selected disabled>' + text + '</option>';
+  }
+  bindingResources.axes.forEach(i => {
+    if (!used.has(i) || i === selectedNum) {
+      html += '<option value="' + i + '"' + (i === selectedNum ? ' selected' : '') + '>' + i + '</option>';
+    }
+  });
+  return html || '<option value="" selected disabled>无已绑定轴号</option>';
+}
+function buildAxisDIOptions(channelIdx, currentVal, allowNull) {
+  const used = getGlobalUsedDI();
+  const currentNum = currentVal && currentVal.startsWith('I') ? parseInt(currentVal.substring(1)) : NaN;
+  const hasCurrent = hasConfiguredAddress('DI', currentNum);
+  let html = '';
+  if (allowNull) html += '<option value="NULL"' + (!hasCurrent ? ' selected' : '') + '>null</option>';
+  if (!hasCurrent && !allowNull) {
+    const text = Number.isInteger(currentNum) ? 'I' + currentNum + '（未绑定）' : '请选择已配置DI';
+    html += '<option value="" selected disabled>' + text + '</option>';
+  }
+  bindingResources.di.forEach(i => {
+    if (!used.has(i) || i === currentNum) {
+      html += '<option value="I' + i + '"' + (i === currentNum ? ' selected' : '') + '>I' + i + '</option>';
+    }
+  });
+  return html || '<option value="" selected disabled>无已配置DI</option>';
+}
+function axisInputId(channelIdx, axisIdx, key) { return 'ch' + (channelIdx + 1) + 'Axis' + axisIdx + '_' + key; }
+
+// 渲染单个轴的表格行
+function renderAxisRows(axis, channelIdx, axisIdx) {
+  const isSpindle = axis.type === 'spindle';
+  const configured = axis.phys !== 'NULL';
+  const hasConflict = axis.conflict === true;
+  const propDefs = isSpindle
+    ? [{ key: 'slot', label: 'LOGICAL_SLOT' }, { key: 'phys', label: 'PHYSICAL_AXIS' }]
+    : [
+        { key: 'slot', label: 'LOGICAL_SLOT' },
+        { key: 'phys', label: 'PHYSICAL_AXIS' },
+        { key: 'posLimit', label: 'POSITIVE_LIMIT_INPUT' },
+        { key: 'negLimit', label: 'NEGATIVE_LIMIT_INPUT' },
+        { key: 'home', label: 'HOME_SWITCH_INPUT' },
+        { key: 'idxSrc', label: 'INDEX_SOURCE' },
+        { key: 'idxIn', label: 'INDEX_INPUT' }
+      ];
+  let html = '';
+  propDefs.forEach((prop, pkIdx) => {
+    const val = axis[prop.key];
+    const isNull = val === 'NULL';
+    const conflictRow = hasConflict && (prop.key === 'slot' || prop.key === 'phys');
+    const inputId = axisInputId(channelIdx, axisIdx, prop.key);
+    html += '<tr' + (conflictRow ? ' class="compare-diff"' : '') + '>';
+    if (pkIdx === 0) {
+      html += '<td class="mono" style="font-weight:700' + (isSpindle ? ';color:var(--purple)' : '') + '" rowspan="' + propDefs.length + '">';
+      html += axis.name;
+      if (isSpindle) html += ' <span class="badge badge-purple" style="font-size:10px">主轴</span>';
+      if (hasConflict) html += ' <span class="badge badge-orange" style="font-size:10px">⚠ 冲突</span>';
+      if (!configured && !isSpindle) html += ' <span class="badge badge-gray" style="font-size:10px">未配置</span>';
+      // 已添加或已配置的 AUX 轴显示删除按钮
+      if (!isSpindle && axis.name.startsWith('AUX') && (configured || axis.userAdded)) {
+        html += '<div style="margin-top:6px"><button class="delete-btn" onclick="resetAxis(' + channelIdx + ',' + axisIdx + ')">🗑 删除</button></div>';
+      }
+      html += '</td>';
+    }
+    html += '<td style="color:var(--text-secondary)" class="mono">' + prop.label + '</td>';
+    if (prop.key === 'slot') {
+      html += '<td class="mono">' + axis.slot + '</td>';
+    } else if (prop.key === 'phys') {
+      html += '<td class="mono"><select id="' + inputId + '" class="edit-input" onchange="updateAxisPhys(' + channelIdx + ',' + axisIdx + ',this.value)">' + physOptions(axis.phys, true) + '</select></td>';
+    } else if (prop.key === 'posLimit') {
+      html += '<td class="mono"><select id="' + inputId + '" class="edit-input" onchange="updateAxisLimit(' + channelIdx + ',' + axisIdx + ',\'posLimit\',this.value)">' + buildAxisDIOptions(channelIdx, axis.posLimit, true) + '</select></td>';
+    } else if (prop.key === 'negLimit') {
+      html += '<td class="mono"><select id="' + inputId + '" class="edit-input" onchange="updateAxisLimit(' + channelIdx + ',' + axisIdx + ',\'negLimit\',this.value)">' + buildAxisDIOptions(channelIdx, axis.negLimit, true) + '</select></td>';
+    } else if (prop.key === 'home') {
+      html += '<td class="mono"><select id="' + inputId + '" class="edit-input" onchange="updateAxisHome(' + channelIdx + ',' + axisIdx + ',this.value)">' + buildAxisDIOptions(channelIdx, axis.home, true) + '</select></td>';
+    } else {
+      html += '<td class="mono' + (isNull ? '" style="color:var(--text-muted);font-style:italic' : '') + '">' + val + '</td>';
+    }
+    html += '</tr>';
+  });
+  return html;
+}
+function updateChannelAxisDI(channelIdx, axisIdx, field, value) {
+  const idx = parseAddrValue(value);
+  const axis = configData.channels[channelIdx].axes[axisIdx];
+  const prev = parseAddrValue(axis[field]);
+  if (idx !== null && idx !== prev && getGlobalUsedDI().has(idx)) { alert('DI_INDEX I' + idx + ' 已被其他命令/轴占用'); renderAllConfig(); return; }
+  axis[field] = idx === null ? 'NULL' : 'I' + idx;
+  renderAllConfig();
+}
+function updateAxisPhys(channelIdx, axisIdx, value) {
+  const axis = configData.channels[channelIdx].axes[axisIdx];
+  const phys = value === 'NULL' ? null : parseInt(value);
+  const prev = toNullableInt(axis.phys);
+  if (phys !== null && phys !== prev && getGlobalUsedAxes().has(phys)) { alert('物理轴号 ' + phys + ' 已被其他轴占用'); renderAllConfig(); return; }
+  axis.phys = value === 'NULL' ? 'NULL' : parseInt(value);
+  renderAllConfig();
+}
+function updateAxisHome(channelIdx, axisIdx, value) {
+  updateChannelAxisDI(channelIdx, axisIdx, 'home', value);
+}
+function updateAxisLimit(channelIdx, axisIdx, field, value) {
+  updateChannelAxisDI(channelIdx, axisIdx, field, value);
+}
+function normalizeConfiguredDISelection(raw, label) {
+  const idx = parseAddrValue(raw);
+  if (idx === null) return 'NULL';
+  if (!hasConfiguredAddress('DI', idx)) {
+    alert(label + ' 必须选择 web_client 已配置的 DI');
+    return false;
+  }
+  return 'I' + idx;
+}
+
+// ==================== CHANNEL RENDER ====================
+function renderChannel(channelIdx) {
+  const ch = configData.channels[channelIdx];
+  const chNum = channelIdx + 1;
+  const prefix = 'ch' + chNum;
+  const scope = channelIdx;
+
+  // --- Axes table ---
+  const axesBody = document.querySelector('#' + prefix + 'AxesTable tbody');
+  let axesHtml = '';
+  ch.axes.forEach((axis, axisIdx) => {
+    // AUX 轴只有在用户添加过或已配置时才显示，SPINDLE/X/Y/Z/A/B/C 始终显示
+    if (axis.name.startsWith('AUX') && axis.phys === 'NULL' && !axis.userAdded) return;
+    axesHtml += renderAxisRows(axis, channelIdx, axisIdx);
+  });
+  // 添加 AUX 轴表单行
+  axesHtml += axisAddFormHtml(channelIdx);
+  // 添加 AUX 轴按钮
+  const unconfiguredAux = ch.axes.filter(a => a.name.startsWith('AUX') && a.phys === 'NULL' && !a.userAdded);
+  axesHtml += '<tr><td colspan="3" style="padding:8px 14px"><button class="add-row-btn" onclick="showAddAxis(' + channelIdx + ')">+ 添加 AUX 轴 (剩余 ' + unconfiguredAux.length + ')</button></td></tr>';
+  axesBody.innerHTML = axesHtml;
+
+  // 更新已配置/未配置计数
+  const configuredCount = ch.axes.filter(a => a.phys !== 'NULL').length;
+  document.getElementById(prefix + 'AxesConfigured').textContent = configuredCount + ' 已配置';
+  document.getElementById(prefix + 'AxesUnconfigured').textContent = (ch.axes.length - configuredCount) + ' 未配置';
+
+  // --- Command section (system + user + add form) ---
+  const cmdBody = document.querySelector('#' + prefix + 'CmdTable tbody');
+  let cmdHtml = '';
+  ch.commands.forEach((c, idx) => {
+    cmdHtml += '<tr><td class="mono" style="font-weight:600">' + c.bit + '</td><td class="mono"><select class="edit-input" onchange="updateSystemCmdDI(' + scope + ',' + idx + ',this.value)">' + buildAddrOptions(scope, 'DI', c.diIndex, true) + '</select></td><td>' + c.name + '</td><td>' + displayChineseName(c.chinese_name) + '</td><td>' + triggerBadge(c.trigger) + '</td><td><span class="badge badge-gray">系统</span></td></tr>';
+  });
+  ch.userCommands.forEach((c, idx) => {
+    cmdHtml += '<tr class="user-entry-row"><td class="mono" style="font-weight:600">' + c.bit + '</td><td class="mono"><select class="edit-input" onchange="updateUserCmdDI(' + scope + ',' + idx + ',this.value)">' + buildAddrOptions(scope, 'DI', c.diIndex, true) + '</select></td><td>' + c.name + '</td><td>' + displayChineseName(c.chinese_name) + '</td><td>' + triggerBadge(c.trigger) + '</td><td style="white-space:nowrap"><span class="user-tag">用户</span> <button class="delete-btn" onclick="deleteUserCmd(' + scope + ',' + idx + ')">🗑 删除</button></td></tr>';
+  });
+  cmdHtml += cmdAddFormHtml(scope);
+  cmdHtml += '<tr><td colspan="6" style="padding:8px 14px"><button class="add-row-btn" onclick="showAddCmd(' + scope + ')">+ 添加用户命令</button></td></tr>';
+  cmdHtml += '<tr class="empty-row"><td colspan="6">C' + chNum + '.12 ~ C' + chNum + '.31 系统保留 · C' + chNum + '.32 ~ C' + chNum + '.255 用户自定义</td></tr>';
+  cmdBody.innerHTML = cmdHtml;
+
+  // --- Status section (system + user + add form) ---
+  const statusBody = document.querySelector('#' + prefix + 'StatusTable tbody');
+  let statusHtml = '';
+  ch.status.forEach((s, idx) => {
+    statusHtml += '<tr><td class="mono" style="font-weight:600">' + s.bit + '</td><td class="mono"><select class="edit-input" onchange="updateSystemStatusDO(' + scope + ',' + idx + ',this.value)">' + buildAddrOptions(scope, 'DO', s.doIndex, true) + '</select></td><td>' + s.name + '</td><td>' + displayChineseName(s.chinese_name) + '</td><td><span class="badge badge-gray">系统</span></td></tr>';
+  });
+  ch.userStatus.forEach((s, idx) => {
+    statusHtml += '<tr class="user-entry-row"><td class="mono" style="font-weight:600">' + s.bit + '</td><td class="mono"><select class="edit-input" onchange="updateUserStatusDO(' + scope + ',' + idx + ',this.value)">' + buildAddrOptions(scope, 'DO', s.doIndex, true) + '</select></td><td>' + s.name + '</td><td>' + displayChineseName(s.chinese_name) + '</td><td style="white-space:nowrap"><span class="user-tag">用户</span> <button class="delete-btn" onclick="deleteUserStatus(' + scope + ',' + idx + ')">🗑 删除</button></td></tr>';
+  });
+  statusHtml += statusAddFormHtml(scope);
+  statusHtml += '<tr><td colspan="5" style="padding:8px 14px"><button class="add-row-btn" onclick="showAddStatus(' + scope + ')">+ 添加用户状态</button></td></tr>';
+  statusHtml += '<tr class="empty-row"><td colspan="5">S' + chNum + '.16 ~ S' + chNum + '.127 系统保留 · S' + chNum + '.128 ~ S' + chNum + '.255 用户自定义</td></tr>';
+  statusBody.innerHTML = statusHtml;
+}
+
+// ==================== AUX AXIS ADD/DELETE ====================
+function axisAddFormHtml(channelIdx) {
+  const ch = configData.channels[channelIdx];
+  const prefix = 'ch' + (channelIdx + 1);
+  const id = prefix + 'Axis';
+  const available = ch.axes.filter(a => a.name.startsWith('AUX') && a.phys === 'NULL' && !a.userAdded).map(a => a.name);
+  const fields = [
+    { key: 'slot', label: 'LOGICAL_SLOT', fixed: true },
+    { key: 'phys', label: 'PHYSICAL_AXIS', type: 'select' },
+    { key: 'home', label: 'HOME_SWITCH_INPUT', type: 'di' },
+    { key: 'idxSrc', label: 'INDEX_SOURCE', fixed: true },
+    { key: 'idxIn', label: 'INDEX_INPUT', fixed: true }
+  ];
+  let html = '<tr class="add-form-row" id="' + id + 'AddForm" style="display:none">';
+  html += '<td style="font-weight:700;vertical-align:top" class="mono" rowspan="' + fields.length + '">';
+  html += available.length ? '<select id="' + id + 'Name" class="edit-input" onchange="updateAddAxisSlot(' + channelIdx + ')">' + available.map(n => '<option value="' + n + '">' + n + '</option>').join('') + '</select>' : '<span style="color:var(--text-muted)">无可用 AUX</span>';
+  html += '</td>';
+  html += '<td style="color:var(--text-secondary)" class="mono">' + fields[0].label + '</td>';
+  html += '<td class="mono" id="' + id + fields[0].key + 'Display">-</td>';
+  html += '</tr>';
+  for (let i = 1; i < fields.length; i++) {
+    const f = fields[i];
+    html += '<tr class="add-form-row" style="display:none">';
+    html += '<td style="color:var(--text-secondary)" class="mono">' + f.label + '</td>';
+    if (f.fixed) {
+      // 固定值字段（INDEX_SOURCE / INDEX_INPUT）不可选择，固定为 null
+      html += '<td class="mono" style="color:var(--text-muted);font-style:italic">null</td>';
+    } else if (f.type === 'select') {
+      html += '<td><select id="' + id + f.key + '" class="edit-input">' + physOptions('NULL', true) + '</select></td>';
+    } else {
+      html += '<td><select id="' + id + f.key + '" class="edit-input">' + buildAxisDIOptions(channelIdx, 'NULL', true) + '</select></td>';
+    }
+    html += '</tr>';
+  }
+  html += '<tr class="add-form-row" id="' + id + 'AddFormActions" style="display:none">';
+  html += '<td colspan="3" style="padding:8px 14px;background:var(--primary-light)"><div class="add-form-actions"><button class="btn-sm btn-sm-confirm" onclick="confirmAddAxis(' + channelIdx + ')">✓ 确认</button><button class="btn-sm btn-sm-cancel" onclick="hideAddAxisForm(' + channelIdx + ')">✕</button></div></td>';
+  html += '</tr>';
+  return html;
+}
+function updateAddAxisSlot(channelIdx) {
+  const ch = configData.channels[channelIdx];
+  const prefix = 'ch' + (channelIdx + 1);
+  const id = prefix + 'Axis';
+  const name = document.getElementById(id + 'Name').value;
+  const axis = ch.axes.find(a => a.name === name);
+  const display = document.getElementById(id + 'slotDisplay');
+  if (display && axis) display.textContent = axis.slot;
+}
+function showAddAxis(channelIdx) {
+  const ch = configData.channels[channelIdx];
+  const prefix = 'ch' + (channelIdx + 1);
+  const id = prefix + 'Axis';
+  const available = ch.axes.filter(a => a.name.startsWith('AUX') && a.phys === 'NULL' && !a.userAdded);
+  if (!available.length) { alert('没有可用的 AUX 轴'); return; }
+  document.querySelectorAll('#' + prefix + 'AxesTable .add-form-row').forEach(tr => tr.style.display = '');
+  const select = document.getElementById(id + 'Name');
+  if (select) select.value = available[0].name;
+  updateAddAxisSlot(channelIdx);
+  // 下拉框默认 null，不显示中文占位符
+  const physEl = document.getElementById(id + 'phys');
+  if (physEl) physEl.value = 'NULL';
+  const homeEl = document.getElementById(id + 'home');
+  if (homeEl) homeEl.value = 'NULL';
+  document.getElementById(id + 'Name').focus();
+}
+function confirmAddAxis(channelIdx) {
+  const ch = configData.channels[channelIdx];
+  const prefix = 'ch' + (channelIdx + 1);
+  const id = prefix + 'Axis';
+  const nameEl = document.getElementById(id + 'Name');
+  if (!nameEl) return;
+  const name = nameEl.value;
+  if (!name || !name.startsWith('AUX')) { alert('请选择 AUX 轴'); return; }
+  const axis = ch.axes.find(a => a.name === name);
+  if (!axis) { alert('AUX 轴不存在'); return; }
+  // LOGICAL_SLOT 由 AUX 序号固定决定，无需修改
+  const physRaw = document.getElementById(id + 'phys').value;
+  const physNumber = toNullableInt(physRaw);
+  if (!hasConfiguredAxis(physNumber)) { alert('PHYSICAL_AXIS 必须选择 web_client 已绑定的轴号'); return; }
+  if (getGlobalUsedAxes().has(physNumber)) { alert('PHYSICAL_AXIS ' + physNumber + ' 已被使用'); return; }
+  const home = normalizeConfiguredDISelection(document.getElementById(id + 'home').value, 'HOME_SWITCH_INPUT');
+  if (home === false) return;
+  axis.phys = physNumber;
+  axis.posLimit = 'NULL';
+  axis.negLimit = 'NULL';
+  axis.home = home;
+  // INDEX_SOURCE / INDEX_INPUT 添加时不可选择，固定写 null
+  axis.idxSrc = 'NULL';
+  axis.idxIn = 'NULL';
+  axis.userAdded = true;
+  renderAllConfig();
+}
+function resetAxis(channelIdx, axisIdx) {
+  const axis = configData.channels[channelIdx].axes[axisIdx];
+  if (!axis || !confirm('确定删除 ' + axis.name + ' 的配置？')) return;
+  axis.phys = 'NULL';
+  axis.posLimit = 'NULL';
+  axis.negLimit = 'NULL';
+  axis.home = 'NULL';
+  axis.idxSrc = 'NULL';
+  axis.idxIn = 'NULL';
+  axis.userAdded = false;
+  renderAllConfig();
+}
+
+// ==================== TAB SWITCHING ====================
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ==================== TRAJECTORY INPUT ====================
+function updateTrajectory(channelIdx, key, value) {
+  const num = parseFloat(value);
+  if (!isNaN(num)) {
+    configData.channels[channelIdx].trajectory[key] = num;
+  }
+}
+
+function formatDI(idx) { return (idx !== null && idx !== undefined && !isNaN(idx)) ? 'I' + idx : 'NULL'; }
+function formatDO(idx) { return (idx !== null && idx !== undefined && !isNaN(idx)) ? 'O' + idx : 'NULL'; }
+
+// ==================== EXPORT INI (dotted-key format) ====================
+function buildCncIniText() {
+  let ini = '; cnc_lite controller configuration\n';
+  ini += '; Generated from cnc_lite.ini on ' + new Date().toISOString().slice(0,10) + '.\n';
+  ini += ';\n; Design rules:\n';
+  ini += '; 1. C/S are the primary logical coordinates.\n';
+  ini += '; 2. DI/DO addresses are stored on the right side with I/O prefix:\n';
+  ini += ';      Cx.y.DI_INDEX = I<number> or NULL\n';
+  ini += ';      Sx.y.DO_INDEX = O<number> or NULL\n';
+  ini += '; 3. NAME describes the logical signal.\n';
+  ini += '; 4. TRIGGER is only used by command inputs.\n';
+  ini += '; 5. Unconfigured C/S entries are omitted.\n';
+  ini += '; 6. All channels share I0-I1024 / O0-O1024.\n;\n';
+  ini += '; Virtual I/O address space:\n';
+  ini += '; Common + Channel 1 + Channel 2 = I0-I1024 / O0-O1024\n\n';
+
+  // Common commands
+  ini += '; ---------------------------------------------------------------------------\n';
+  ini += '; Common command C0\n';
+  ini += '; ---------------------------------------------------------------------------\n\n';
+  ini += '[COMMON_COMMANDS]\n';
+  ini += 'CAPACITY = 256\n\n';
+  configData.common.commands.forEach(c => {
+    ini += c.bit + '.DI_INDEX = ' + formatDI(c.diIndex) + '\n';
+    ini += c.bit + '.NAME = ' + c.name + '\n';
+    ini += c.bit + '.CHINESE_NAME = ' + (c.chinese_name || '') + '\n';
+    ini += c.bit + '.TRIGGER = ' + (c.trigger || 'NULL') + '\n\n';
+  });
+  configData.common.userCommands.forEach(c => {
+    ini += c.bit + '.DI_INDEX = ' + formatDI(c.diIndex) + '\n';
+    ini += c.bit + '.NAME = ' + c.name + '\n';
+    ini += c.bit + '.CHINESE_NAME = ' + (c.chinese_name || '') + '\n';
+    ini += c.bit + '.TRIGGER = ' + (c.trigger || 'NULL') + '\n\n';
+  });
+  ini += '\n\n';
+
+  // Common status
+  ini += '; ---------------------------------------------------------------------------\n';
+  ini += '; Common status S0\n';
+  ini += '; ---------------------------------------------------------------------------\n\n';
+  ini += '[COMMON_STATUS]\n';
+  ini += 'CAPACITY = 256\n\n';
+  configData.common.status.forEach(s => {
+    ini += s.bit + '.DO_INDEX = ' + formatDO(s.doIndex) + '\n';
+    ini += s.bit + '.NAME = ' + s.name + '\n';
+    ini += s.bit + '.CHINESE_NAME = ' + (s.chinese_name || '') + '\n\n';
+  });
+  configData.common.userStatus.forEach(s => {
+    ini += s.bit + '.DO_INDEX = ' + formatDO(s.doIndex) + '\n';
+    ini += s.bit + '.NAME = ' + s.name + '\n';
+    ini += s.bit + '.CHINESE_NAME = ' + (s.chinese_name || '') + '\n\n';
+  });
+  ini += '\n';
+
+  // Channels
+  configData.channels.forEach((ch) => {
+    const chNum = ch.id;
+    ini += '; ===========================================================================\n';
+    ini += '; Channel ' + chNum + '\n';
+    ini += '; ===========================================================================\n\n';
+
+    ini += '[CHANNEL_' + chNum + ']\n';
+    ini += 'ID = ' + chNum + '\n\n';
+
+    ini += '[CHANNEL_' + chNum + '_TRAJECTORY]\n';
+    ini += 'DEFAULT_LINEAR_VELOCITY = ' + ch.trajectory.velocity + '\n';
+    ini += 'DEFAULT_LINEAR_ACCELERATION = ' + ch.trajectory.acceleration + '\n';
+    ini += 'DEFAULT_LINEAR_JERK = ' + ch.trajectory.jerk + '\n';
+    ini += 'PATH_TOLERANCE = ' + ch.trajectory.tolerance + '\n\n';
+
+    // Axes
+    ini += '[CHANNEL_' + chNum + '_AXES]\n';
+    // Check for conflict
+    const hasConflict = ch.axes.some(a => a.conflict);
+    if (hasConflict) {
+      ini += '; NOTE:\n';
+      ini += '; SPINDLE and X retain the original values and both use LOGICAL_SLOT=0 and\n';
+      ini += '; PHYSICAL_AXIS=0. Confirm whether spindle and linear-axis namespaces are\n';
+      ini += '; separate. If they share one namespace, this is a configuration conflict.\n\n';
+    }
+    const visibleAxes = ch.axes.filter(axis => !(axis.name.startsWith('AUX') && axis.phys === 'NULL' && !axis.userAdded));
+    visibleAxes.forEach((axis, axIdx) => {
+      ini += axis.name + '.LOGICAL_SLOT = ' + axis.slot + '\n';
+      ini += axis.name + '.PHYSICAL_AXIS = ' + axis.phys + '\n';
+      if (axis.type !== 'spindle') {
+        ini += axis.name + '.POSITIVE_LIMIT_INPUT = ' + (axis.posLimit || 'NULL') + '\n';
+        ini += axis.name + '.NEGATIVE_LIMIT_INPUT = ' + (axis.negLimit || 'NULL') + '\n';
+        ini += axis.name + '.HOME_SWITCH_INPUT = ' + (axis.home || 'NULL') + '\n';
+        ini += axis.name + '.INDEX_SOURCE = ' + (axis.idxSrc || 'NULL') + '\n';
+        ini += axis.name + '.INDEX_INPUT = ' + (axis.idxIn || 'NULL') + '\n';
+      }
+      if (axIdx < visibleAxes.length - 1) ini += '\n';
+    });
+    ini += '\n\n';
+
+    // Commands
+    ini += '[CHANNEL_' + chNum + '_COMMANDS]\n';
+    ini += 'CAPACITY = 256\n\n';
+    ch.commands.forEach(c => {
+      ini += c.bit + '.DI_INDEX = ' + formatDI(c.diIndex) + '\n';
+      ini += c.bit + '.NAME = ' + c.name + '\n';
+      ini += c.bit + '.CHINESE_NAME = ' + (c.chinese_name || '') + '\n';
+      ini += c.bit + '.TRIGGER = ' + (c.trigger || 'NULL') + '\n\n';
+    });
+    ch.userCommands.forEach(c => {
+      ini += c.bit + '.DI_INDEX = ' + formatDI(c.diIndex) + '\n';
+      ini += c.bit + '.NAME = ' + c.name + '\n';
+      ini += c.bit + '.CHINESE_NAME = ' + (c.chinese_name || '') + '\n';
+      ini += c.bit + '.TRIGGER = ' + (c.trigger || 'NULL') + '\n\n';
+    });
+    ini += '\n';
+
+    // Status
+    ini += '[CHANNEL_' + chNum + '_STATUS]\n';
+    ini += 'CAPACITY = 256\n\n';
+    ch.status.forEach(s => {
+      ini += s.bit + '.DO_INDEX = ' + formatDO(s.doIndex) + '\n';
+      ini += s.bit + '.NAME = ' + s.name + '\n';
+      ini += s.bit + '.CHINESE_NAME = ' + (s.chinese_name || '') + '\n\n';
+    });
+    ch.userStatus.forEach(s => {
+      ini += s.bit + '.DO_INDEX = ' + formatDO(s.doIndex) + '\n';
+      ini += s.bit + '.NAME = ' + s.name + '\n';
+      ini += s.bit + '.CHINESE_NAME = ' + (s.chinese_name || '') + '\n\n';
+    });
+  });
+
+  return ini;
+}
+
+/**
+ * Apply CNC INI text into configData (used by parent shell via postMessage).
+ * Does not alert; caller shows status.
+ */
+function importINIText(text) {
+  const previousConfig = configData;
+  try {
+    if (!applyCncIniText(text)) {
+      refreshBindingResources();
+      renderAllConfig();
+      return {
+        ok: false,
+        error: '文件中未找到 CNC Lite 配置段',
+        warnings: [],
+        message: '从工程加载失败: 文件中未找到 CNC Lite 配置段',
+      };
+    }
+    refreshBindingResources();
+    renderAllConfig();
+    return { ok: true, warnings: [], message: '已从工程加载 CNC 配置' };
+  } catch (err) {
+    configData = previousConfig;
+    try { renderAllConfig(); } catch (renderErr) { console.error(renderErr); }
+    console.error(err);
+    return {
+      ok: false,
+      error: err && err.message ? err.message : String(err),
+      warnings: [],
+      message: '从工程加载失败: ' + (err && err.message ? err.message : String(err)),
+    };
+  }
+}
+
+function postToParent(payload) {
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage(payload, '*');
+  }
+}
+
+window.addEventListener('message', function(event) {
+  if (event.source !== window.parent) return;
+  const data = event.data;
+  if (!data || typeof data.type !== 'string') return;
+
+  if (data.type === 'cnc-lite-load') {
+    if (Array.isArray(data.axisBindings)) window.__zmAxisBindings = data.axisBindings;
+    if (Array.isArray(data.ioBindings)) window.__zmIoBindings = data.ioBindings;
+    const iniText = typeof data.iniText === 'string' ? data.iniText : '';
+    if (!iniText.trim()) {
+      console.log("no ini text");
+      configData = makeDefaultConfigData();
+      refreshBindingResources();
+      renderAllConfig();
+      postToParent({
+        type: 'cnc-lite-load-result',
+        ok: true,
+        warnings: [],
+        message: '工程中无 CNC 段，使用默认配置',
+      });
+      return;
+    }
+    const result = importINIText(iniText);
+    postToParent({
+      type: 'cnc-lite-load-result',
+      ok: result.ok,
+      message: result.message,
+      warnings: result.warnings || [],
+      error: result.error,
+    });
+    return;
+  }
+
+  if (data.type === 'cnc-lite-request-export') {
+    try {
+      const iniText = buildCncIniText();
+      postToParent({ type: 'cnc-lite-export', iniText: iniText });
+    } catch (err) {
+      postToParent({
+        type: 'cnc-lite-export',
+        iniText: '',
+        error: err && err.message ? err.message : String(err),
+      });
+    }
+  }
+});
+
+// ==================== INIT ====================
+renderAllConfig();
+</script>
+</body>
+</html>

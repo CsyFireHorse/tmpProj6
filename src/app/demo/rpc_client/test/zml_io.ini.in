@@ -1,0 +1,12 @@
+; 日期：2026-10-22
+; 代笔：GPT-6 Codex
+; Public IO calls exercise configured virtual objects through the real service.
+[base]
+axis_num=0
+eni_path=@ZML_ENI@
+count_to_exit=0
+[io_binding]
+di_10.source=virtual
+do_11.source=virtual
+ai_12.source=virtual
+ao_13.source=virtual

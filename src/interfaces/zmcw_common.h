@@ -1,0 +1,1 @@
+#define ZMC_DLLPORT

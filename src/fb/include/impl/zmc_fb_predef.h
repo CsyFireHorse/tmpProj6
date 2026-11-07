@@ -1,0 +1,19 @@
+#ifndef _ZMC_FB_PREDEF_H_
+#define _ZMC_FB_PREDEF_H_
+
+// FB related macros
+#define ZMC_FB_POWER_TIMEOUT_COUNT (1000)
+#define ZMC_FB_RESET_TIMEOUT_COUNT (1000)
+#define ZMC_FB_CTRL_MODE_TIMEOUT_COUNT (1000)
+// #define ZMC_FB_HOME_USE_POWEROFF // USE_POWEROFF_BEFORE_HOME
+
+// Axis related macros  
+#define ZMC_AXIS_TYPE_DEFAULT (1) // default init value use by axis Config
+#define ZMC_AXIS_USE_POS_RES (0)
+#define AXIS_MAGIC_NUMBER (0x8765)
+#define ZMC_AXIS_POSITION_PERIOD_DEFAULT (360.)
+#define ZMC_AXIS_CHECK_PVA_NAN 1
+#define ZMC_AXIS_POWEROFF_COUNT (252)
+#define AXISGRP_MAGIC_NUMBER (0xC7A5)
+
+#endif /* _ZMC_FB_PREDEF_H_ */

@@ -1,0 +1,26 @@
+{
+    "run_config": {
+        "cycle_time": 0.01,
+        "exit_count": 200,
+        "verbose": 2,
+        "verbose_modulo": 1
+    },
+    "axis_types": ["AX_FACTORY_VIRTUAL"],
+    "fb_types": ["FB_TYPE_POWER", "FB_TYPE_MOVEABSOLUTE"],
+    "commands": [
+        {"fbId": 1, "action": "AX_ATTR_SET", "attr":"AX_ATTR_IRATIOTECHUNITSNUM", "tick": 0, "val": 10},
+        {"fbId": 1, "action": "AX_ATTR_SET", "attr":"AX_ATTR_DWRATIOTECHUNITSDENOM", "tick": 0, "val": 3},
+        {"fbId": 1, "action": "AXFB_NOP", "attr":"FB_ATTR_AUTORUN", "tick": 0, "val": 1},
+        {"fbId": 2, "action": "AXFB_NOP", "attr":"FB_ATTR_AUTORUN", "tick": 0, "val": 1},
+        {"fbId": 1, "action": "AXFB_NOP", "attr":"FB_ATTR_AXIS", "tick": 0, "val": 1},
+        {"fbId": 1, "action": "AXFB_NOP", "attr":"FB_ATTR_ENABLE", "tick": 0, "val": 1},
+        {"fbId": 1, "action": "AXFB_NOP", "attr":"FB_ATTR_BREGULATORON", "tick": 0, "val": 1},
+        {"fbId": 1, "action": "AXFB_NOP", "attr":"FB_ATTR_BDRIVESTART", "tick": 0, "val": 1},
+        {"fbId": 2, "action": "AXFB_NOP", "attr":"FB_ATTR_AXIS", "tick": 0, "val": 1},
+        {"fbId": 2, "action": "AXFB_NOP", "attr":"FB_ATTR_POSITION", "tick": 0, "val": 15},
+        {"fbId": 2, "action": "AXFB_NOP", "attr":"FB_ATTR_VELOCITY", "tick": 0, "val": 20},
+        {"fbId": 2, "action": "AXFB_NOP", "attr":"FB_ATTR_ACCELERATION", "tick": 0, "val": 200},
+        {"fbId": 2, "attr":"FB_ATTR_DECELERATION", "tick": 0, "val": 200},
+        {"fbId": 2, "attr":"FB_ATTR_EXECUTE", "tick": 6, "val": 1}
+    ]
+}

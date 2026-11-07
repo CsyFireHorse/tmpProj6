@@ -1,0 +1,1 @@
+#include "str2hash.hpp"
