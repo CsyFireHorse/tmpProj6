@@ -230,32 +230,32 @@ double _goldenSectionSearch0(double(*p)(double x),double& l, double& u, double& 
     double x4;
     if (x3 - x2 > x2 - x1) {    // 
       x4 = x2 + RESPHI * (x3 - x2);   // [x1, x2, x3, x3]
-    } else {    // b <= a，左半区间长度较大
+    } else {    // b <= a; the left half-interval is longer.
       x4 = x2 - RESPHI * (x2 - x1);   // [x1, x4, x2, x3]
     }
 
     // x1 <  x2, x4 < x3
-    if (tau* abs(x3 - x1) > (abs(x2 - x4))) {    // 判断是否达到收敛条件
+    if (tau* abs(x3 - x1) > (abs(x2 - x4))) {    // Check whether the convergence condition is met.
       return (x3 + x1) / 2;
     }
-    if (abs(x3 - x1) < tau * (abs(x2) + abs(x4))) {    // 判断是否达到收敛条件
-    //   return (x3 + x1) / 2;   // 达到收敛条件，取区间长度的一半作为极小值点输出
+    if (abs(x3 - x1) < tau * (abs(x2) + abs(x4))) {    // Check whether the convergence condition is met.
+    //   return (x3 + x1) / 2;   // The convergence condition is met; return the midpoint as the minimum.
     }
 
     // assert (function.func(x4) != function.func(x2));
 
-    /* 未达到收敛条件，继续搜索 */
-    if (f(x4) < f(x2)) {    // x4点的函数值如图中f4b所示时
-      if (x3 - x2 > x2 - x1) {    // b > a，右半区间长度较大
-        return _goldenSectionSearch(f, x2, x4, x3, tau);  // 以x2，x4，x3作为新三点，继续搜索
-      } else {    // b <= a，左半区间长度较大
-        return _goldenSectionSearch(f, x1, x4, x2, tau);  // 以x1，x4，x2作为新三点，继续搜索
+    /* The convergence condition is not met; continue searching. */
+    if (f(x4) < f(x2)) {    // The function value at x4 is as shown by f4b.
+      if (x3 - x2 > x2 - x1) {    // b > a; the right half-interval is longer.
+        return _goldenSectionSearch(f, x2, x4, x3, tau);  // Continue with x2, x4, and x3 as the new points.
+      } else {    // b <= a; the left half-interval is longer.
+        return _goldenSectionSearch(f, x1, x4, x2, tau);  // Continue with x1, x4, and x2 as the new points.
       }
-    } else {    // x4点的函数值如图中f4a所示时
-      if (x3 - x2 > x2 - x1) {    // b > a，右半区间长度较大
-        return _goldenSectionSearch(f, x1, x2, x4, tau);  // 以x1，x2，x4作为新三点，继续搜索
-      } else {  // b <= a，左半区间长度较大
-        return _goldenSectionSearch(f, x4, x2, x3, tau);  // 以x4，x2，x3作为新三点，继续搜索
+    } else {    // The function value at x4 is as shown by f4a.
+      if (x3 - x2 > x2 - x1) {    // b > a; the right half-interval is longer.
+        return _goldenSectionSearch(f, x1, x2, x4, tau);  // Continue with x1, x2, and x4 as the new points.
+      } else {  // b <= a; the left half-interval is longer.
+        return _goldenSectionSearch(f, x4, x2, x3, tau);  // Continue with x4, x2, and x3 as the new points.
       }
     }
 }

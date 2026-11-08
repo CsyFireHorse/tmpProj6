@@ -22,7 +22,7 @@ enum {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// 过程映像
+// Process image.
 typedef union {
     struct {
         U16 switch_on: 1;
@@ -82,16 +82,16 @@ typedef struct {
 
 
 typedef struct {
-    servo_ctrl_word sc;    // 新控制字
-    servo_stat_word ss;    // 旧状态字
-    int run_delay;         // 延时启动
-    int fault_reset_delay; // 延时再错误恢复
-    float zero_p;          // 零点位置
-    float offset_p;        // 偏移输出位置
-    I32 out_p;             // 输出位置
-    I32 out_v;             // 输出转速
-    I16 out_t;             // 输出扭矩
-    bool reverse;          // 当前方向
+    servo_ctrl_word sc;    // New control word.
+    servo_stat_word ss;    // Previous status word.
+    int run_delay;         // Startup delay.
+    int fault_reset_delay; // Delay before fault recovery.
+    float zero_p;          // Zero position.
+    float offset_p;        // Output position offset.
+    I32 out_p;             // Output position.
+    I32 out_v;             // Output velocity.
+    I16 out_t;             // Output torque.
+    bool reverse;          // Current direction.
 }servos_t;
 
 

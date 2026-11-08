@@ -1,5 +1,5 @@
-; 日期：2026-10-22
-; 代笔：GPT-6 Codex
+; Date: 2026-10-22
+; Author: GPT-6 Codex
 ; Virtual axes use the production INI loader without external motor files.
 [base]
 axis_num=@ZML_AXIS_NUM@

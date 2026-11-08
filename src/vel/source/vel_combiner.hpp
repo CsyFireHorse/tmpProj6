@@ -19,7 +19,7 @@ class VelCombiner {
         J = jerk;
     }
     inline int size() const { return _vels.size(); }
-    // 复制并尾部添加
+    // Copy and append to the end.
     inline void append(const T& v) { _vels.push_back(v); }
 
     T& operator[](int idx) { return _vels[idx]; };
@@ -49,7 +49,7 @@ class VelCombiner {
         }
     }
     inline int build() { return build_from(_cur_idx); }
-    // 更新第 idx个点
+    // Update point idx.
     void _build_idx(int idx = 0) {
         int N = size();
         ctArr.resize(N + 1);

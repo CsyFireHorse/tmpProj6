@@ -7,24 +7,24 @@
 
 using namespace zmc;
 
-// 显示所有命令及其帮助信息
+// Display all commands and their help text.
 void showHelp(const CommandParser& parser) {
     std::cout << "Available commands:" << std::endl;
     
-    // 获取所有命令的帮助文本
+    // Get the help text for all commands.
     auto commandHelp = parser.getAllCommandsHelp();
     auto commands = parser.getRegisteredCommands();
     
-    // 找出最长的命令名称，用于对齐输出
+    // Find the longest command name to align the output.
     size_t maxCmdLength = 0;
     for (const auto& cmd : commands) {
         maxCmdLength = std::max(maxCmdLength, cmd.length());
     }
     
-    // 按字母顺序排序命令
+    // Sort commands alphabetically.
     std::sort(commands.begin(), commands.end());
     
-    // 显示每个命令及其帮助文本
+    // Display each command and its help text.
     for (const auto& cmd : commands) {
         std::cout << "  " << std::left << std::setw(maxCmdLength + 4) << cmd;
         auto it = commandHelp.find(cmd);
@@ -35,12 +35,12 @@ void showHelp(const CommandParser& parser) {
     }
 }
 
-// 加法函数
+// Addition function.
 void addNumbers(int a, int b) {
     std::cout << "Result: " << (a + b) << std::endl;
 }
 
-// 回显函数
+// Echo function.
 void echoMessage(const std::string& message) {
     std::cout << message << std::endl;
 }
@@ -68,7 +68,7 @@ static void dumpArgv(int argc, char** argv) {
     }
 }
 
-// 乘法函数
+// Multiplication function.
 float multiply(float a, float b) {
     return a * b;
 }
@@ -76,23 +76,23 @@ float multiply(float a, float b) {
 
 
 
-    // 注册命令 - 使用统一的 bind 接口，添加帮助描述
+    // Register commands through the shared bind interface and add help descriptions.
 void CommandInteractorBind(CommandParser& parser) {
-    // 注册无参数函数
+    // Register a function with no arguments.
     parser.bind("help", [&parser]() { 
         showHelp(parser); 
     }, "Show this help message");
     
-    // 注册退出命令
+    // Register the exit command.
     parser.bind("exit", [&parser]() {
         std::cout << "Exiting..." << std::endl;
         parser.setExitFlag();
     }, "Exit the program");
     
-    // 注册普通函数 (一个参数)
+    // Register a regular function with one argument.
     parser.bind("echoSg", echoMessage, "Echo a message (usage: echo <message>)");
     parser.bind("echoPchar", echoPchar, "Echo a message (usage: echo <message>)");
-    // 注册普通函数 (变长参数)
+    // Register a regular function with variadic arguments.
     parser.bind("echoLambda", [](const std::vector<std::string>& args) {
         for (size_t i = 0; i < args.size(); ++i) {
             printf("echo %s\n", args[i].c_str());
@@ -106,7 +106,7 @@ void CommandInteractorBind(CommandParser& parser) {
         a++;
         std::cout << "Incremented to: " << a << std::endl; 
     });
-    // 注册普通函数 (两个参数)
+    // Register a regular function with two arguments.
     parser.bind("add", addNumbers, "Add two integers (usage: add <a> <b>)");
     parser.bind("minus", [](double a, double b) {
         std::cout << "Result: " << (a - b) << std::endl;
@@ -134,14 +134,14 @@ void CommandInteractorBind(CommandParser& parser) {
         std::cout << "Sum: " << sum << std::endl;
     }, "Sum the arguments (usage: sum <a> <b>)");
 
-    // 注册一个参数的 lambda
+    // Register a lambda with one argument.
     parser.bind("upper", [](const std::string& text) {
         std::string result = text;
         std::transform(result.begin(), result.end(), result.begin(), ::toupper);
         std::cout << result << std::endl;
     }, "Convert text to uppercase (usage: upper <text>)");
     
-    // 注册两个参数的 lambda
+    // Register a lambda with two arguments.
     parser.bind("divide", [](float a, float b) {
         if (b == 0) {
             std::cout << "Error: Division by zero" << std::endl;
@@ -153,18 +153,18 @@ void CommandInteractorBind(CommandParser& parser) {
 
 
 void CommandInteractor_demo() {
-    // 创建命令解析器
+    // Create the command parser.
     CommandParser parser;
 
     CommandInteractorBind(parser);
 
-    // 创建命令交互器
+    // Create the command interactor.
     auto interactor = makeInteractor(parser);
     
-    // 设置错误处理函数
+    // Set the error handler.
     interactor.setErrorHandlerDefault();
     
-    // 运行交互式命令循环
+    // Run the interactive command loop.
     interactor.run("Simple Command Parser Demo\nType 'help' for available commands or 'exit' to quit");
 
 } 

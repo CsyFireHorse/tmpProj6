@@ -7,15 +7,15 @@
 extern "C" {
 #endif
 
-// 不透明指针类型
+// Opaque pointer type.
 typedef struct ZmcSplineStruct ZmcSplineStruct;
 typedef ZmcSplineStruct* zmc_spline_t;
 
-// 对象生命周期管理
+// Object lifecycle management.
 ZMC_DLLPORT zmc_spline_t zmc_spline_new();
 ZMC_DLLPORT void zmc_spline_delete(zmc_spline_t handle);
 
-// 核心功能接口
+// Core function interfaces.
 ZMC_DLLPORT void zmc_spline_set_xx_yy(zmc_spline_t handle, 
     int len, const double* tArr, const double* pArr);
     
@@ -35,7 +35,7 @@ ZMC_DLLPORT double zmc_spline_get_pos(zmc_spline_t handle, double t);
 ZMC_DLLPORT double zmc_spline_get_vel(zmc_spline_t handle, double t);
 ZMC_DLLPORT double zmc_spline_get_acc(zmc_spline_t handle, double t);
 
-// 新增接口声明
+// Additional interface declarations.
 ZMC_DLLPORT void zmc_spline_set_default_allocator(zmc_spline_t handle);
 ZMC_DLLPORT void zmc_spline_set_condition_value(zmc_spline_t handle, 
     const double* values, int len);

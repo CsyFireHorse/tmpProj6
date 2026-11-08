@@ -9,7 +9,7 @@ namespace zmc {
 
 typedef int (*PdoHandler)(void*, const void*, void*);
 
-// 主站应用
+// Master application.
 class EcatServo : public EcatBase {
    public:
     EcatServo(const char* eth);

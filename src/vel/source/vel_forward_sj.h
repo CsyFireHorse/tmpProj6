@@ -88,9 +88,9 @@ private:
     double _get_jerk_s70(double tm)const;
 public:
 
-    double am; // 可松弛
-    double vm; // 可松弛
-    double an; // 可松弛
+    double am; // Relaxable.
+    double vm; // Relaxable.
+    double an; // Relaxable.
 
 private:
     union{

@@ -7,12 +7,12 @@ using namespace zmc;
 void fbFactory_demo() {
     FactoryCmdProc processor;
 
-    // 创建Axis实例
+    // Create an Axis instance.
     processor.createAxis(AX_FACTORY_VIRTUAL);
-    // 创建FB实例
+    // Create a function block instance.
     processor.createFb(FB_TYPE_POWER);
     processor.createFb(FB_TYPE_MOVEABSOLUTE);
-    // 处理指令
+    // Process commands.
     CommandStruct cmd{1, FB_ATTR_AXIS, 0, 1};
     processor.process(cmd);
 

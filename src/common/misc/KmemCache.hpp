@@ -5,24 +5,24 @@
 #include <cassert>
 #include <iostream>
 
-// 辅助工具：获取位图中的第一个零位 (找空闲槽)
+// Helper: find the first zero bit in the bitmap (an available slot).
 static inline int find_first_free(uint64_t bitmap, int limit) {
     if (bitmap == ~0ULL) return -1;
-    // 使用内置指令计算末尾零的个数 (__builtin_ctzll)
+    // Use the built-in instruction to count trailing zeros (__builtin_ctzll).
     int bit = __builtin_ctzll(~bitmap);
     return (bit < limit) ? bit : -1;
 }
 
 /**
- * @brief Slab 结构定义
+ * @brief Slab structure definition.
  * 
- * 管理一块连续内存，内部划分为多个 Slots
+ * Manage a contiguous memory block divided into multiple slots.
  */
 struct Slab {
-    uint8_t* memory;      // 实际对象存储区域
-    uint64_t usage_mask;  // 位图 (支持最多 64 个对象/Slab)
-    uint8_t  active_count; // 已分配对象数
-    uint8_t  total_slots;  // 总槽位数
+    uint8_t* memory;      // Storage area for objects.
+    uint64_t usage_mask;  // Bitmap (supports up to 64 objects per slab).
+    uint8_t  active_count; // Number of allocated objects.
+    uint8_t  total_slots;  // Total number of slots.
     Slab*    next;
     Slab*    prev;
 
@@ -56,7 +56,7 @@ struct Slab {
 /**
  * @brief kmem_cache
  * 
- * 管理特定对象类型的缓存。
+ * Manage a cache for a specific object type.
  */
 template <typename T>
 class KmemCache {
@@ -65,23 +65,23 @@ public:
         : obj_size(sizeof(T)), 
           slots_per_slab(slab_capacity > 64 ? 64 : slab_capacity),
           full_slabs(nullptr), partial_slabs(nullptr), empty_slabs(nullptr) {
-        // 确保对象大小满足指针或对齐要求
+        // Ensure the object size meets pointer or alignment requirements.
         if (obj_size < sizeof(void*)) obj_size = sizeof(void*);
     }
 
     T* alloc() {
         Slab* target = nullptr;
 
-        // 1. 优先从部分空闲的 Slab 分配 (最优路径)
+        // 1. Allocate from a partially free slab first (fastest path).
         if (partial_slabs) {
             target = partial_slabs;
         } 
-        // 2. 其次从全空的 Slab 分配
+        // 2. Otherwise, allocate from an empty slab.
         else if (empty_slabs) {
             target = empty_slabs;
             move_slab(&empty_slabs, &partial_slabs, target);
         }
-        // 3. 最后创建新的 Slab
+        // 3. Create a new slab if needed.
         else {
             target = create_new_slab();
             add_to_list(&partial_slabs, target);
@@ -89,18 +89,18 @@ public:
 
         void* ptr = target->allocate_slot(obj_size);
         
-        // 如果 Slab 满了，移动到 full 链表
+        // Move the slab to the full list when it is full.
         if (target->is_full()) {
             move_slab(&partial_slabs, &full_slabs, target);
         }
 
-        return new (ptr) T(); // 执行构造函数 (Object Caching)
+        return new (ptr) T(); // Call the constructor (object caching).
     }
 
     void free(T* ptr) {
-        ptr->~T(); // 执行析构函数
+        ptr->~T(); // Call the destructor.
         
-        // 寻找该指针属于哪个 Slab (实际应用中通常通过 Page Header 查找，这里简化模拟)
+        // Find which slab owns this pointer (normally found through the page header; simplified here).
         Slab* s = find_slab_by_ptr(ptr);
         assert(s != nullptr);
 
@@ -108,18 +108,18 @@ public:
         s->deallocate_slot(ptr, obj_size);
 
         if (s->is_empty()) {
-            // 从当前链表移动到 empty
+            // Move the slab from the current list to the empty list.
             Slab** current_list = was_full ? &full_slabs : &partial_slabs;
             move_slab(current_list, &empty_slabs, s);
             
-            // 策略：如果 empty 过多，可以释放内存。这里保留以复用。
+            // Policy: excess empty slabs could be freed; retain them here for reuse.
         } else if (was_full) {
             move_slab(&full_slabs, &partial_slabs, s);
         }
     }
     /**
-     * @brief 预分配指定数量的 Slab
-     * @param slab_count 需要预分配的 Slab 个数
+     * @brief Preallocate the specified number of slabs.
+     * @param slab_count Number of slabs to preallocate.
      */
     void reserve_slabs(size_t slab_count) {
         for (size_t i = 0; i < slab_count; ++i) {
@@ -129,13 +129,13 @@ public:
     }
 
     /**
-     * @brief 确保 Cache 中至少能容纳指定数量的对象
-     * @param object_count 总对象容量目标
+     * @brief Ensure the cache can hold at least the specified number of objects.
+     * @param object_count Target total object capacity.
      */
     void reserve_objects(size_t object_count) {
-        // 计算当前总容量（这里仅计算空闲和部分空闲的槽位比较复杂，通常简单处理为总槽位）
-        // 实际工程中，我们通常直接根据目标数计算需要补足多少个 Slab
-        size_t current_slabs = count_all_slabs(); // 需辅助函数
+        // Calculate current capacity (counting free and partially free slots is complex; total slots are used here).
+        // In production, calculate how many slabs are needed from the target capacity.
+        size_t current_slabs = count_all_slabs(); // Requires a helper function.
         size_t target_slabs = (object_count + slots_per_slab - 1) / slots_per_slab;
         
         if (target_slabs > current_slabs) {
@@ -144,7 +144,7 @@ public:
     }
 
     private:
-    // 辅助工具：统计当前已有的 Slab 总数
+    // Helper: count the slabs currently in use.
     size_t count_all_slabs() const {
         auto count_list = [](Slab* head) {
             size_t c = 0;
@@ -161,14 +161,14 @@ private:
     Slab* partial_slabs;
     Slab* empty_slabs;
 
-    // 模拟操作系统底层的内存页分配
+    // Simulate low-level operating system page allocation.
     Slab* create_new_slab() {
         size_t total_mem = obj_size * slots_per_slab;
         void* raw_mem = ::operator new(total_mem); 
         return new Slab(raw_mem, obj_size, slots_per_slab);
     }
 
-    // 链表管理辅助函数
+    // Linked-list management helpers.
     void add_to_list(Slab** list, Slab* s) {
         s->next = *list;
         if (*list) (*list)->prev = s;
@@ -187,10 +187,10 @@ private:
         add_to_list(to, s);
     }
 
-    // 实际实现中，这里通过指针高位地址计算 Page Index 极快 (O(1))
-    // 演示版本使用简单的全局记录（仅作示意）
+    // A production implementation can calculate the page index from the pointer's high bits in O(1).
+    // This demo uses a simple global record for illustration.
     Slab* find_slab_by_ptr(void* ptr) {
-        // 这里仅为逻辑完整性，实际 OS 中这步是不需要遍历的
+        // This traversal is only for completeness; a real OS implementation does not need it.
         auto check = [&](Slab* head) -> Slab* {
             for (Slab* c = head; c; c = c->next) {
                 if (ptr >= c->memory && ptr < (c->memory + obj_size * slots_per_slab))

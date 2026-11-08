@@ -16,13 +16,13 @@
 #define DLL_PUBLIC __attribute__ ((visibility("default")))
 
 #ifndef ZMC_DLLPORT
-#  if defined(WIN32) /* windows平台 */
+#  if defined(WIN32) /* Windows platform. */
 #    if defined(ZMC_DLLBUILD)
 #      define ZMC_DLLPORT __declspec (dllexport)
 #    else
 #       define ZMC_DLLPORT
 #    endif
-#  elif defined(__linux__) /* linux平台 */
+#  elif defined(__linux__) /* Linux platform. */
 #    if defined(ZMC_DLLBUILD)
 #      define ZMC_DLLPORT __attribute__((visibility("default")))
 #    else
@@ -30,7 +30,7 @@
 #    endif
 #  elif defined(__GNUC__) // mingw32,mingw64,msys
 #    define ZMC_DLLPORT
-#  else /* 其它平台 */
+#  else /* Other platforms. */
 #    define ZMC_DLLPORT extern
 #  endif
 #endif

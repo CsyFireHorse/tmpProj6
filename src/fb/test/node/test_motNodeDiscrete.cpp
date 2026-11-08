@@ -15,7 +15,7 @@
 
 using namespace zmc;
 
-// 基础测试模板
+// Basic test template.
 template<typename T>
 struct AxTestTmpl : public AxSgMotTmpl<T, 1> {
     AxTestTmpl() {

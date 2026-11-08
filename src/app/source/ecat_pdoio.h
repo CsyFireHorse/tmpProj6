@@ -6,7 +6,7 @@
 #include "common/container/buffer_3p.hpp"
 #include "mhelper/eni_iomap_parser.h"
 
-// pdo输出控制
+// PDO output control.
 class Rxpdo{
     // uint8_t* arr;
     // uint32_t len;
@@ -42,7 +42,7 @@ struct Uint8Buf{
     uint32_t len;
 };
 
-// pdo接收状态
+// PDO receive status.
 class Txpdo{
     // uint8_t* arr;
     // uint32_t len;
@@ -81,7 +81,7 @@ public:
     }
 };
 
-// 两种 PDO 的缓冲
+// Buffers for both PDO types.
 struct TxRxpdo{
     Txpdo tx;
     Rxpdo rx;

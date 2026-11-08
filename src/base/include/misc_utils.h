@@ -17,7 +17,7 @@
 #include <sstream>
 
 namespace zmc{
-// 多次复制，只有使用 stringView 才能避免拷贝
+// Multiple copies are made; only string_view avoids copying.
 std::vector<std::string> stringSplit0(const std::string& strIn, char delim);
 std::vector<std::string> stringSplit(const std::string& strIn, char delim);
 
@@ -49,7 +49,7 @@ public:
             if (!cmd_data.size()) continue;
             errCode = func(cmd_data, __args...); 
             if (errCode){
-                // 异常退出
+                // Exit on error.
                 break;
             }
         }
@@ -71,7 +71,7 @@ public:
             if (!cmd_data.size()) continue;
             errCode = pFunc(cmd_data, __args...); 
             if (errCode){
-                // 异常退出
+                // Exit on error.
                 break;
             }
         }
@@ -83,9 +83,9 @@ private:
     std::string pre_word = "cmd> ";
 };
 
-/** 命令行解析，只能使用左引用，不支持万能引用转发
- * pFunc  解析函数
- * __args 变长参数
+/** Parse command-line arguments using lvalue references only; forwarding references are not supported.
+ * pFunc   Parser function.
+ * __args  Variadic arguments.
  * 
 */
 template <typename... Args>
@@ -102,12 +102,12 @@ int cmd_parse_loop(int (*pFunc)(const std::string&, Args&...), Args&... __args){
         if (!cmd_data.size()) continue;
 
         if ("break" == cmd_data){
-            // 正常退出
+            // Exit normally.
             break;
         }else{   
             errCode = pFunc(cmd_data, __args...); 
             if (errCode){
-                // 异常退出
+                // Exit on error.
                 break;
             }
         }
@@ -140,12 +140,12 @@ int load_file_parse(const std::string& file_path, int (*pFunc)(const std::string
         if (!cmd_data.size()) continue;
 
         if ("break" == cmd_data){
-            // 正常退出
+            // Exit normally.
             break;
         }else{   
             errCode = pFunc(cmd_data, __args...); 
             if (errCode){
-                // 异常退出
+                // Exit on error.
                 break;
             }
         }
@@ -166,12 +166,12 @@ int cmd_lines_parse(std::string& lines, int (*pFunc)(const std::string&, Args&..
         std::string cmd_data = stringTrim(std::string(line));
         if (!cmd_data.size()) continue;
         if ("break" == cmd_data){
-            // 正常退出
+            // Exit normally.
             break;
         }else{   
             int errCode = pFunc(cmd_data, __args...); 
             if (errCode){
-                // 异常退出
+                // Exit on error.
                 return errCode;
             }
         }

@@ -48,13 +48,13 @@ static uint16_t const __g_zalCrc1021Tab[256]={
 };
 
 /** 
- *	@brief		计算CRC16	
+ *	@brief		Calculate CRC16.
 
- *  \param[in] pSource  数据	
- *  \param[in] len      长度	
- *  \param[in] crcInit  初始crc	
+ *  \param[in] pSource  Data.
+ *  \param[in] len      Length.
+ *  \param[in] crcInit  Initial CRC.
 
- *  \return CRC16码
+ *  \return CRC16 value.
 **/
 inline uint16_t  zalCrc1021Cal(const uint8_t *pSource, uint16_t len, uint16_t crcInit){
     uint16_t usResult = crcInit;

@@ -28,10 +28,10 @@ TEST(motNode, jog) {
         }
         mov.runCycle();
         axis.runCycle();
-        // 断言可根据需要添加
+        // Add assertions as needed.
         printf("%d,%f,%f,%f\n", i, ax.fSetPosition, ax.fSetVelocity, ax.fSetAcceleration);
         EXPECT_EQ(0, chk.check(ax.fSetPosition, ax.fSetVelocity, ax.fSetAcceleration));
-        // 可选：检查方向
+        // Optional: check the direction.
 
     }
 }
@@ -66,7 +66,7 @@ TEST(motNode, jog_home) {
             mov.JogForward = true;
         }
 
-        // 根据位置调整速度和方向
+        // Adjust speed and direction based on position.
         if ((ax.fSetPosition < posZero + Tol) ^ fl) {
             vm *= 0.7;
             mov.Velocity = vm;
@@ -79,13 +79,13 @@ TEST(motNode, jog_home) {
         mov.runCycle();
         axis.runCycle();
 
-        // 检查运动状态
+        // Check the motion state.
         if (i > 99) {
             EXPECT_NEAR(ax.fSetPosition, 9, 1e-4);
             EXPECT_NEAR(ax.fSetVelocity, 0, 1e-4);
         }
         printf("%d,%f,%f,%f\n", i, ax.fSetPosition, ax.fSetVelocity, ax.fSetAcceleration);
-        // 检查运动轨迹
+        // Check the motion trajectory.
         EXPECT_EQ(0, chk.check(ax.fSetPosition, ax.fSetVelocity, ax.fSetAcceleration));
     }
 }

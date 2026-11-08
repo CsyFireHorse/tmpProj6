@@ -3,7 +3,7 @@
 
 #include "stdint.h"
 
-// PDO 过程映像
+// PDO process image.
 #pragma pack(push, 1)
 struct PdoRxProtal3{
     struct{

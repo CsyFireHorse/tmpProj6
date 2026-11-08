@@ -2,7 +2,7 @@
 #include "cam_tappet_serialize.h"
 #include "stdio.h"
 
-// 用法示例
+// Usage example.
 void cam_tappet_serialize_demo() {
     CamTappet data;
     data.xMin = 0.0;
@@ -10,9 +10,9 @@ void cam_tappet_serialize_demo() {
     data.xyva = {{0, 3.5, 6, 7}, {2, -2.987654321, 6.5, 0}, {5.5, 5, 3.5, 0}, {10, 2, 0.5, 0}};
     data.tappets = {{2, 3, 0, 0, 256, 1.5}, {0, 1, 0, 0, 511, 2.5}};
     const char* filename = "out.txt";
-    // 序列化示例
+    // Serialization example.
     data.serialize(filename);
-    // 解析示例
+    // Parsing example.
     CamTappet data2;
     data2.parse(filename);
 

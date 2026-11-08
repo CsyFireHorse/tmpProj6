@@ -29,19 +29,19 @@ static bool state_control(int axis, servo_stat_word *s0, const servo_stat_word *
 
         if (s1->b.fault && !servo->fault_reset_delay) 
         {
-            // 延时1秒再尝试错误恢复，防止伺服在错误和恢复中反复快速切换损坏电路
+            // Wait 1 second before retrying fault recovery to prevent rapid fault/recovery cycling from damaging the circuit.
             _DBG_("axis %d: delay fault reset, ctrl:%d, stat:%x", axis, c->v, (int)s1->v);
-            servo->fault_reset_delay = 2000; // 2s(即2000个周期)
-            servo->run_delay = 2000; // 当错误恢复成功伺服出力后，延时2s再开始加速(根据抱闸动作时间适当调整)
+            servo->fault_reset_delay = 2000; // 2 seconds (2000 cycles).
+            servo->run_delay = 2000; // After fault recovery succeeds and the servo is enabled, wait 2 seconds before accelerating; adjust for brake timing.
             break;
         }
-        // 伺服发生错误，且在延时等待处理中
+        // The servo has a fault and is waiting for the delay to expire.
         if (servo->fault_reset_delay) 
         {
             servo->fault_reset_delay--;
             if (!servo->fault_reset_delay) 
             {
-                // 延时减到0，尝试进行错误恢复
+                // The delay has reached zero; attempt fault recovery.
                 _DBG_("axis %d: start fault reset", axis);
                 c->b.fault_reset = 1;
             }
@@ -143,7 +143,7 @@ static int motor_state_init(ECAT_HANDLE ecat_dev,ECAT_ENI_INFO ptInfo)
         run = state_control(i, &servo->ss, pi->servos[i].stat, &servo->sc, false);
         usleep(1000);
 
-        // 更新输出变量
+        // Update output variables.
         *po->servos[i].ctrl = servo->sc;
         *po->servos[i].p = 0;
 
@@ -158,7 +158,7 @@ static int motor_state_init(ECAT_HANDLE ecat_dev,ECAT_ENI_INFO ptInfo)
             continue;
         }
 
-        //初始位置初始化
+        // Initialize the starting position.
         servo->out_p = *pi->servos[i].p;
         servo->zero_p = (float)servo->out_p;
         servo->offset_p = 0;
@@ -166,7 +166,7 @@ static int motor_state_init(ECAT_HANDLE ecat_dev,ECAT_ENI_INFO ptInfo)
         servo->out_t = 0;
         servo->reverse = false;
         
-        //初始话最高速度
+        // Initialize the maximum speed.
         EcatCoeSDODownloadEx(ecat_dev,i,0x6081,0x0,0,4,&max_speed,100);
 
         fail_try = 1000;
@@ -183,12 +183,12 @@ int async_control_demo(uint32_t index, uint32_t channel){
     uint64_t loops = 0;
     ECAT_HANDLE ecat_dev;
     ECAT_ENI_INFO ptInfo;
-    //PCIe-2E 只有一个通道,PCIe-4E有两个通道
+    // PCIe-2E has one channel; PCIe-4E has two channels.
     RETURN_IF_FAILED(EcatOpen(&ecat_dev, BOARD_ALIAS(index_buff, index), channel));
     
     RETURN_IF_FAILED(EcatBusRun(ecat_dev, ENI_FILE));
 
-    // 请求切换状态
+    // Request a state transition.
     uint8_t state;
     RETURN_IF_FAILED(EcatRequestMasterState(ecat_dev, EcatStateO));
     for (uint32_t i = 0; ; i++)
@@ -246,8 +246,8 @@ int async_control_demo(uint32_t index, uint32_t channel){
                     _INF_("OUT servo[%d]: p=%10d", i,  *po->servos[i].p);
                 }
 
-                // 伺服已出力，延时结束，进行正常控制
-                // 不同轴单位可能不一样，下表定义各轴位置范围及增量
+                // The servo is enabled and the delay has expired; proceed with normal control.
+                // Axis units may differ. The table below defines each axis's position range and increment.
                 I32 range_min[] = { -500, -500, -1500 };
                 I32 range_max[] = {  500, 500, 1500 };
                 float step_size[] = { 1, 1, 10 };
@@ -260,7 +260,7 @@ int async_control_demo(uint32_t index, uint32_t channel){
                 servo->out_p = MIN_LIMIT(servo->out_p ,range_min[i]);
                 servo->out_p = MAX_LIMIT(servo->out_p ,range_max[i]);
 
-                // 更新输出变量
+                // Update output variables.
                 po->servos[i].ctrl->v = 0x2F;
                 *po->servos[i].p = servo->out_p;
             }

@@ -25,7 +25,7 @@ inline uint32_t index2ukey(uint8_t slv_idx, uint16_t index, uint8_t subindex){
     return (slv_idx << 24) | ( index << 8) | subindex;
 }
 
-// 单个从站的io端口
+// IO ports for a single slave.
 typedef struct proc_slv_dido_ofs{
     // uint8_t             io_servo_type;
     // int16_t             po_mode_offset;
@@ -59,7 +59,7 @@ typedef struct proc_slv_dido_ofs{
     pdo_item_t* po_AO;
 };
 
-// 从所有从站重排列的io端口
+// IO ports reordered across all slaves.
 typedef struct proc_dido_ofs{
     uint16_t pi_DI_num;
     pdo_item_t* pi_DI;
@@ -77,11 +77,11 @@ typedef struct proc_dido_ofs{
 
 class EniIomapper{
 public:
-    // 主站信息，杂类信息
+    // Master and miscellaneous information.
     MasterInfo                      master_pdo;
-    // 包含每个从站的多种io端口
+    // Contains the different IO ports for each slave.
     std::vector<proc_slv_dido_ofs>      slave_pdo;
-    // 重新排列之后的IO端口
+    // Reordered IO ports.
     proc_dido_ofs      io_batch;
 };
 

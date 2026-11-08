@@ -8,14 +8,14 @@
 
 using namespace zmc;
 
-// 测试基本的AxFbSimulator功能
+// Test basic AxFbSimulator functionality.
 void testBasicSimulator() {
     std::cout << "=== Testing AxFbSimulator ===" << std::endl;
     
-    // 创建基本仿真器实例
+    // Create a basic simulator instance.
     AxFbSimulator simulator;
     
-    // 配置仿真器
+    // Configure the simulator.
     RunConfig config;
     config.cycleTime = 0.001;   // 1ms cycle time
     config.exitCount = 0;       // Run indefinitely
@@ -23,17 +23,17 @@ void testBasicSimulator() {
     config.verboseModulo = 100; // Print status every 100 ticks
     simulator.setRunConfig(config);
     
-    // 创建轴和功能块
+    // Create an axis and function block.
     simulator.createAxis(static_cast<AX_FACTORY_TYPE>(0)); // Create axis 0
     simulator.createAxis(static_cast<AX_FACTORY_TYPE>(1)); // Create axis 1
     simulator.createFb(static_cast<FB_TYPE>(0)); // Create function block 0
     
-    // 运行仿真
+    // Run the simulation.
     std::cout << "Running simulation for 0.5 seconds..." << std::endl;
     simulator.delayTime(0.5);
     std::cout << "Current time: " << simulator.getCurrentTime() << " seconds" << std::endl;
     
-    // 运行到特定时间
+    // Run until a specified time.
     std::cout << "Running to time 1.0 seconds..." << std::endl;
     simulator.runToTime(1.0);
     std::cout << "Current time: " << simulator.getCurrentTime() << " seconds" << std::endl;
@@ -41,14 +41,14 @@ void testBasicSimulator() {
     std::cout << "Basic simulator test completed." << std::endl << std::endl;
 }
 
-// 测试命令行交互式仿真器
+// Test the interactive command-line simulator.
 void testCmdSimulator() {
     std::cout << "=== Testing AxFbCmdSimulator ===" << std::endl;
     
-    // 创建命令行仿真器实例
+    // Create a command-line simulator instance.
     AxFbCmdSimulator cmdSimulator;
     
-    // 配置仿真器
+    // Configure the simulator.
     RunConfig config;
     config.cycleTime = 0.001;
     config.exitCount = 0;
@@ -56,18 +56,18 @@ void testCmdSimulator() {
     config.verboseModulo = 100;
     cmdSimulator.setRunConfig(config);
     
-    // 创建轴和功能块
+    // Create an axis and function block.
     cmdSimulator.createAxis(static_cast<AX_FACTORY_TYPE>(0));
     cmdSimulator.createFb(static_cast<FB_TYPE>(0));
     
-    // 运行一些周期
+    // Run a few cycles.
     std::cout << "Running 10 cycles..." << std::endl;
     for (int i = 0; i < 10; i++) {
         cmdSimulator.runCycle();
     }
     std::cout << "Current time: " << cmdSimulator.getCurrentTime() << " seconds" << std::endl;
     
-    // 启动命令行交互
+    // Start the command-line interaction.
     std::cout << "Starting command line interface..." << std::endl;
     std::cout << "Type 'exit' to continue with the test." << std::endl;
     cmdSimulator.runCommandInteractor("Command Line Simulator Test - Type 'help' for available commands");
@@ -75,16 +75,16 @@ void testCmdSimulator() {
     std::cout << "Command simulator test completed." << std::endl << std::endl;
 }
 
-// 测试HTTP仿真器
+// Test the HTTP simulator.
 void testHttpSimulator() {
     std::cout << "=== Testing AxFbHttpSimulator ===" << std::endl;
     
-    // 创建HTTP仿真器实例
+    // Create an HTTP simulator instance.
     AxFbHttpSimulator::HttpConfig httpConfig;
     httpConfig.port = 8080;
     AxFbHttpSimulator httpSimulator(httpConfig);
     
-    // 配置仿真器
+    // Configure the simulator.
     RunConfig config;
     config.cycleTime = 0.001;
     config.exitCount = 0;
@@ -92,37 +92,37 @@ void testHttpSimulator() {
     config.verboseModulo = 100;
     httpSimulator.setRunConfig(config);
     
-    // 创建轴和功能块
+    // Create an axis and function block.
     httpSimulator.createAxis(static_cast<AX_FACTORY_TYPE>(0));
     httpSimulator.createFb(static_cast<FB_TYPE>(0));
     
-    // 启动HTTP服务器
+    // Start the HTTP server.
     std::cout << "Starting HTTP server..." << std::endl;
     httpSimulator.startServer();
     
-    // 运行一些周期
+    // Run a few cycles.
     std::cout << "Running simulation for 0.5 seconds..." << std::endl;
     httpSimulator.delayTime(0.5);
     std::cout << "Current time: " << httpSimulator.getCurrentTime() << " seconds" << std::endl;
     
-    // 保持服务器运行一段时间
+    // Keep the server running for a while.
     std::cout << "HTTP server is running. Press Enter to stop..." << std::endl;
     std::cin.get();
     
-    // 停止HTTP服务器
+    // Stop the HTTP server.
     httpSimulator.stopServer();
     
     std::cout << "HTTP simulator test completed." << std::endl << std::endl;
 }
 
 int main(int argc, char** argv) {
-    // 测试基本仿真器
+    // Test the basic simulator.
     testBasicSimulator();
     
-    // 测试命令行仿真器
+    // Test the command-line simulator.
     testCmdSimulator();
     
-    // 测试HTTP仿真器
+    // Test the HTTP simulator.
     testHttpSimulator();
     
     std::cout << "All tests completed." << std::endl;

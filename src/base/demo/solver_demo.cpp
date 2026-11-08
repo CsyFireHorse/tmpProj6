@@ -2,9 +2,9 @@
 #include <stdio.h>
 
 
-// 定义需要求解过零点的函数
+// Define the function whose zero crossing is to be found.
 static double f(double x) {
-    return x * x - 4; // 示例函数 x^2 - 4
+    return x * x - 4; // Example function: x^2 - 4.
 }
 void bisection_demo() {
     double a = 0, b = 5, epsilon = 0.0001;

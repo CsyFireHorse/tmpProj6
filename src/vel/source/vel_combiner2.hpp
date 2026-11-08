@@ -18,7 +18,7 @@ class VelCombinerOnline {
         J = jerk;
     }
     inline int size() const { return _vels.size(); }
-    // 复制并尾部添加
+    // Copy and append to the end.
     inline void append(const T& v) { _vels.push_back(v); }
     inline T& back() { return _vels.back(); };
     T& operator[](int idx) { return _vels[idx]; };

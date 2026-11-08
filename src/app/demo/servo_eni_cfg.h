@@ -2,7 +2,7 @@
 
 /**************************motor config*************************/
 #define ENI_FILE "zcpb.xml"
-#define NUM_SERVOS  1           // 总电机数
+#define NUM_SERVOS  1           // Total number of motors.
 
 typedef struct {
     servo_ctrl servos[NUM_SERVOS];

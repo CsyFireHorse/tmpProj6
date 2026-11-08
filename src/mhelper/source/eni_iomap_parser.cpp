@@ -6,25 +6,25 @@
 #include "string.h"
 
 
-// 地址偏移单元  char 最小为 8 bit
+// Address offsets are measured in bytes; a char is at least 8 bits.
 #define OFFSET_UNIT 8
 
 namespace zmc {
 // mast.di_keys
-/** 基于io信息，提取对应的从站字典，组成io端口字典列表
+/** Extract the corresponding slave dictionaries from IO data and build a list of IO port dictionaries.
  *
- * v_out    \param[out]     每个从站的端口对应字典
- * pDiItem  \param[out]     重排的端口对应字典
- * slaves   \param[in]      从站信息
+ * v_out    \param[out]     Port dictionary for each slave.
+ * pDiItem  \param[out]     Dictionary for the reordered ports.
+ * slaves   \param[in]      Slave information.
  */
 void fill_slave_pdo_item(std::vector<proc_slv_dido_ofs>& v_out, pdo_item_t*& pDiItem,
                          uint16_t& di_num, const vector<uint32_t>& keys, const SlaveInfo& slvInfo,
                          uint8_t di_do_ai_ao_flag) {
     const vector<SLAVES_INFO_t>& slaves = slvInfo.slaves;
     int sz = slaves.size();
-    // 对应 pDiItem
+    // Corresponds to pDiItem.
     std::vector<pdo_item_t> v_di_item;
-    // 对应 v_out
+    // Corresponds to v_out.
     std::vector<pdo_item_t>* v_slave_item = new std::vector<pdo_item_t>[sz];
 
     uint8_t slv_idx, subindex;

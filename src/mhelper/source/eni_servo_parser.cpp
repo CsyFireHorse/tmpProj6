@@ -4,7 +4,7 @@
 #include "string.h"
 #include "common/zmc/zmc_predef.h"
 
-// 地址偏移单元  char 最小为 8 bit 
+// Address offsets are measured in bytes; a char is at least 8 bits.
 #define OFFSET_UNIT  8                        
 
 namespace zmc{

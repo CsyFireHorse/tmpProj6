@@ -7,13 +7,13 @@
 
 #define ECAT_ETH0  ZMC_DEFAULT_NET_NAME
 #define ECAT_ETH1  "zecm1"
-#define RPC_SERVER_ETH0_PORT  5000            // 开放与上位机通讯的端口号
-#define RPC_SERVER_ETH1_PORT  5001            // 开放与上位机通讯的端口号
+#define RPC_SERVER_ETH0_PORT  5000            // Port for communication with the host computer.
+#define RPC_SERVER_ETH1_PORT  5001            // Port for communication with the host computer.
 
-#define MAIN_CYCLE_TIME  1000                 // 主站过程数据通讯周期
-#define SUB_CYCLE_TIME  (MAIN_CYCLE_TIME * 5) // 邮箱数据通讯周期
-#define COE_SDO_DEMO  0                       // 是否需要通过SDO配置从站
-#define DETAIL_LOGS  0                        // 打印电机运行LOG
+#define MAIN_CYCLE_TIME  1000                 // Master process data communication cycle.
+#define SUB_CYCLE_TIME  (MAIN_CYCLE_TIME * 5) // Mailbox communication cycle.
+#define COE_SDO_DEMO  0                       // Whether to configure the slave through SDO.
+#define DETAIL_LOGS  0                        // Print motor operation logs.
 
 
 bool ecat_context_request_state(ECAT_SIMPLE_START_CONTEXT *ctx, ECAT_BYTE state, int retry)
@@ -72,7 +72,7 @@ ECAT_RESULT servo_set_opmode_by_sdo(ECAT_SIMPLE_START_CONTEXT& ctx, int _num_ser
     uint32_t pp_speed = 500;
 
     ecat_sdo_t items[] = { 
-        { 0, 0x6060, 0x00, 1, op_mode}, // 控制模式
+        { 0, 0x6060, 0x00, 1, op_mode}, // Control mode.
         // { 0, 0x6081, 0x00, 4, pp_speed } //speed --> pp mode
     };
 
@@ -141,7 +141,7 @@ int EcatBase::start(){
     if (ECAT_FAILED(ret)) {
         return ret & 0x8000;;
     }
-    // 进入预操作状态
+    // Enter the pre-operational state.
     if (!request_state(EcatStateO)){
 		printf("request_state(EcatStateO) failed!\n");
         // return -1;

@@ -31,12 +31,12 @@ int ecatServo_demo(const char * eni){
     ECAT_RESULT ret;
     EcatServo m("zecm0");
 
-    // 将当前线程转为实时线程，优先级为50
+    // Convert the current thread to a real-time thread with priority 50.
     // struct sched_param sched;
     // sched.sched_priority = 50;
     // pthread_setschedparam(pthread_self(), SCHED_FIFO, &sched);
 
-    // 初始化主站环境
+    // Initialize the master environment.
     LOG_RET(ret, EcatMasterLibInit(ECAT_NULL));
     if (ECAT_FAILED(ret)) {
         printf("init failed %d\n", ret); 
@@ -58,7 +58,7 @@ int ecatServo_demo(const char * eni){
     while (getchar() != 'e')
         usleep(50000);
     
-    // 退出
+    // Exit.
     LOG_RET(ret, m.stop());   
     LOG_RET(ret, EcatMasterLibExit());
     return 0;

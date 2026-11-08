@@ -5,20 +5,20 @@
 
 class SegregatedFitsAllocator {
 private:
-    static constexpr size_t NUM_BUCKETS = 32; // 支持从 16B 到 4GB 的范围
-    static constexpr size_t MIN_BLOCK_SIZE = 32; // 最小块（Header + Footer + 2 pointers）
+    static constexpr size_t NUM_BUCKETS = 32; // Supports sizes from 16 B to 4 GB.
+    static constexpr size_t MIN_BLOCK_SIZE = 32; // Minimum block (header + footer + 2 pointers).
     static constexpr size_t ALIGNMENT = 8;
 
     struct Block {
-        size_t header; // 低 1 位表示已分配（1）或空闲（0），其余位表示大小
-        Block* next;   // 仅在空闲时有效
-        Block* prev;   // 仅在空闲时有效
+        size_t header; // The lowest bit indicates allocated (1) or free (0); the remaining bits store the size.
+        Block* next;   // Valid only when free.
+        Block* prev;   // Valid only when free.
 
         size_t size() const { return header & ~1UL; }
         bool is_allocated() const { return header & 1; }
         void set_header(size_t s, bool alloc) { header = s | (alloc ? 1 : 0); }
 
-        // 边界标签：获取块末尾的 size_t (Footer)
+        // Boundary tag: get the size_t at the end of the block (footer).
         size_t* footer() {
             return (size_t*)((uint8_t*)this + size() - sizeof(size_t));
         }
@@ -36,7 +36,7 @@ public:
         heap_size = align(total_size);
         heap_start = ::operator new(heap_size);
         
-        // 初始化整个堆为一个巨大的空闲块
+        // Initialize the entire heap as one large free block.
         Block* initial = (Block*)heap_start;
         initial->set_header(heap_size, false);
         initial->update_footer();
@@ -44,23 +44,23 @@ public:
     }
 
     void* allocate(size_t size) {
-        size_t total_size = align(size + sizeof(size_t) * 2); // 数据 + Header + Footer
+        size_t total_size = align(size + sizeof(size_t) * 2); // Data + header + footer.
         if (total_size < MIN_BLOCK_SIZE) total_size = MIN_BLOCK_SIZE;
 
         int bucket_idx = get_bucket_index(total_size);
         Block* found = nullptr;
 
-        // 从当前桶开始向上寻找合适的空闲块
+        // Search upward from the current bucket for a suitable free block.
         for (int i = bucket_idx; i < NUM_BUCKETS; ++i) {
             found = find_fit_in_bucket(buckets[i], total_size);
             if (found) break;
         }
 
-        if (!found) return nullptr; // 内存溢出
+        if (!found) return nullptr; // Out of memory.
 
         remove_from_bucket(found);
         
-        // 检查是否需要分割 (Spliting)
+        // Check whether the block needs to be split.
         size_t remaining = found->size() - total_size;
         if (remaining >= MIN_BLOCK_SIZE) {
             Block* next_block = (Block*)((uint8_t*)found + total_size);
@@ -75,14 +75,14 @@ public:
             found->update_footer();
         }
 
-        return (uint8_t*)found + sizeof(size_t); // 返回数据区
+        return (uint8_t*)found + sizeof(size_t); // Return the data area.
     }
 
     void deallocate(void* ptr) {
         if (!ptr) return;
         Block* block = (Block*)((uint8_t*)ptr - sizeof(size_t));
         
-        // 尝试向前和向后合并 (Coalescing)
+        // Try to coalesce with the previous and next blocks.
         block = coalesce(block);
         
         block->set_header(block->size(), false);
@@ -94,10 +94,10 @@ private:
     size_t align(size_t s) { return (s + ALIGNMENT - 1) & ~(ALIGNMENT - 1); }
 
     int get_bucket_index(size_t size) {
-        // 简单的对数分级 (Power of 2)
+        // Use simple logarithmic size classes (powers of two).
         if (size <= 32) return 0;
         int idx = 0;
-        size >>= 6; // 从 64B 开始分级
+        size >>= 6; // Start size classes at 64 B.
         while (size > 0 && idx < NUM_BUCKETS - 1) {
             size >>= 1;
             idx++;
@@ -132,14 +132,14 @@ private:
     Block* coalesce(Block* b) {
         size_t size = b->size();
         
-        // 1. 检查物理后块
+        // 1. Check the physically next block.
         Block* next = (Block*)((uint8_t*)b + size);
         if ((uint8_t*)next < (uint8_t*)heap_start + heap_size && !next->is_allocated()) {
             remove_from_bucket(next);
             size += next->size();
         }
 
-        // 2. 检查物理前块 (利用 Footer)
+        // 2. Check the physically previous block using the footer.
         if ((uint8_t*)b > (uint8_t*)heap_start) {
             size_t prev_footer = *((size_t*)((uint8_t*)b - sizeof(size_t)));
             if (!(prev_footer & 1)) {

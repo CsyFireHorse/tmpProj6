@@ -389,7 +389,7 @@ SLadderSegmentType SLadderParams::_relaxation_A_Symmetry(SjRelaxParam& param) co
             }
         }
     }else if (T2 < 0 && T6 >= 0){
-        double Amt = fVm_2Am(V_m); // 收缩 Am
+        double Amt = fVm_2Am(V_m); // Reduce Am.
         // assert Amt <= A_m
         double S51 =  vaa2s51(V_m, A_n);
         if (S_d >= S51){
@@ -400,7 +400,7 @@ SLadderSegmentType SLadderParams::_relaxation_A_Symmetry(SjRelaxParam& param) co
                 return SLADDER_42_SEGMENT;
             return SLADDER_61_SEGMENT;// (V_m, Amt, A_n) // T2=0   
         }else{
-            // 收缩 Vm Am
+            // Reduce Vm and Am.
             if (vm_min > fAm_2Vm(A_m) || vm_min > fAn_2Vm(A_n)){
                 double S32 = vaa2s51(vm_min, A_n); // vaa2s32()
                 if (S_d >= S32 + TOL){
@@ -455,7 +455,7 @@ SLadderSegmentType SLadderParams::_relaxation_A_Symmetry(SjRelaxParam& param) co
             }  
         }      
     }else if (T2 >= 0 && T6 < 0){
-        double Ant = fVm_2An(V_m); // 收缩 A_n
+        double Ant = fVm_2An(V_m); // Reduce A_n.
         // assert Ant <= A_n;
         double S52 =  vaa2s52(V_m, A_m);
         if (S_d >= S52){
@@ -466,7 +466,7 @@ SLadderSegmentType SLadderParams::_relaxation_A_Symmetry(SjRelaxParam& param) co
                 return SLADDER_41_SEGMENT;
             return SLADDER_62_SEGMENT;// , (V_m, A_m, Ant)  // T6=0  
         }else{
-            // 收缩 Vm An
+            // Reduce Vm and An.
             if (vm_min > fAn_2Vm(A_n) || vm_min > fAm_2Vm(A_m)){// S4 = vaa2s31()
                 double S31 = vaa2s52(vm_min, A_m);
                 if (S_d > S31 + TOL){
@@ -533,8 +533,8 @@ SLadderSegmentType SLadderParams::_relaxation_A_Symmetry(SjRelaxParam& param) co
             }
         }
     }else if (T2 < 0 && T6 < 0){
-        double Amt = fVm_2Am(V_m); // 收缩 Am
-        double Ant = fVm_2An(V_m); // 收缩 An
+        double Amt = fVm_2Am(V_m); // Reduce Am.
+        double Ant = fVm_2An(V_m); // Reduce An.
         // assert Amt <= A_m and Ant <= A_n
         if (Amt < A_0){
             errCode = 4;

@@ -112,9 +112,9 @@ enum SLadderSymmetry:unsigned char
     SLADDER_Z_SYMMETRY, // A0=Ad=0, V0=Vd=0, AM=AN
 
     // SLADDER_ND_SYMMETRY = 4, // AM!=AN
-    // SLADDER_AD_SYMMETRY = 5, // A0!=0,V0=Vd，AM=AN
-    // SLADDER_VD_SYMMETRY = 6, // A0!=0,V0=Vd，AM=AN
-    // SLADDER_ZD_SYMMETRY = 7, // A0!=0， V0=Vd=0，AM=AN
+    // SLADDER_AD_SYMMETRY = 5, // A0!=0, V0=Vd, AM=AN
+    // SLADDER_VD_SYMMETRY = 6, // A0!=0, V0=Vd, AM=AN
+    // SLADDER_ZD_SYMMETRY = 7, // A0!=0, V0=Vd=0, AM=AN
 };
 
 enum SLadderSortType
@@ -155,16 +155,16 @@ struct VelSgParams{
 
 enum VelocityMode:unsigned char
 {
-    VelocityMode_constant = 0,                             //!< 恒速模式
-    VelocityMode_t,                                        //!< t速度模式
-    VelocityMode_s,                                        //!< s速度模式
-    VelocityMode_s_j,                                      //!< s_j速度模式
-    VelocityMode_s_ttt,                                    //!< s_ttt速度模式
-    VelocityMode_s_tr,                                      //!< s_tr速度模式
-    VelocityMode_trp,                                       //!< t速度模式
-    VelocityMode_misc,                                      //!< 混合速度模式
-    VelocityMode_slice,                                     //!< 切片速度模式
-    VelocityMode_constime,                                  //!< 定时恒速模式
+    VelocityMode_constant = 0,                             //!< Constant-velocity mode.
+    VelocityMode_t,                                        //!< t-velocity mode.
+    VelocityMode_s,                                        //!< s-velocity mode.
+    VelocityMode_s_j,                                      //!< s_j-velocity mode.
+    VelocityMode_s_ttt,                                    //!< s_ttt-velocity mode.
+    VelocityMode_s_tr,                                      //!< s_tr-velocity mode.
+    VelocityMode_trp,                                       //!< t-velocity mode.
+    VelocityMode_misc,                                      //!< Mixed-velocity mode.
+    VelocityMode_slice,                                     //!< Sliced-velocity mode.
+    VelocityMode_constime,                                  //!< Timed constant-velocity mode.
     VelocityMode_num,
 };
 

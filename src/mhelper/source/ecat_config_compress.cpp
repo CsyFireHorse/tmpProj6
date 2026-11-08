@@ -216,7 +216,7 @@ uint16_t timeout_from_compact(uint8_t val) {
     return val * 100; // fallback
 }
 
-// Pack transitions: 每2个Transition拼成1个字节
+// Pack transitions: combine every two transitions into one byte.
 void pack_transitions(const uint8_t* transitions, uint8_t count, uint8_t* out) {
     for (uint8_t i = 0; i < count; i += 2) {
         uint8_t low = transitions[i] & 0x0F;

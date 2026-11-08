@@ -8,17 +8,17 @@ using namespace zmc;
 void fbt_cam_calc_demo() {
     printf("=== FbtCamCalc Demo ===\n");
     
-    // 创建功能块
+    // Create the function block.
     FbtReadCAM fbRdCam;
     FbtCamCalc fbCalc;
     
-    // 读取凸轮文件
+    // Read the cam file.
     fbRdCam.sFileName = ZMC_STRING_80{"abc3.cam"};
     fbRdCam.bExecute = true;
     
     printf("Reading CAM file: %s\n", fbRdCam.sFileName);
     
-    // 执行读取
+    // Execute the read operation.
     for (int i = 0; i < 10; i++) {
         fbRdCam.runCycle();
         if (fbRdCam.bDone) {
@@ -31,10 +31,10 @@ void fbt_cam_calc_demo() {
         }
     }
     
-    // 设置凸轮表
+    // Set the cam table.
     fbCalc.CamTable = fbRdCam.CAM;
     
-    // 设置默认参数
+    // Set the default parameters.
     fbCalc.MasterScaling = 1.0;
     fbCalc.SlaveScaling = 1.0;
     fbCalc.MasterOffset = 0.0;
@@ -48,29 +48,29 @@ void fbt_cam_calc_demo() {
     printf("Cycle\tEnable\tMasterPos\tMasterVel\tMasterAcc\tSlavePos\tSlaveVel\tSlaveAcc\tBusy\tError\n");
     printf("--------------------------------------------------------------------------------------------------------\n");
     
-    // 测试不同主轴位置
+    // Test different master positions.
     double testPositions[] = {0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0, 360.0};
     int numTests = sizeof(testPositions) / sizeof(testPositions[0]);
     
     for (int i = 0; i < numTests; i++) {
-        // 设置主轴PVA
+        // Set the master position, velocity, and acceleration.
         fbCalc.MasterPosition = testPositions[i];
-        fbCalc.MasterVelocity = 10.0;  // 固定速度
-        fbCalc.MasterAcceleration = 0.0;  // 无加速度
+        fbCalc.MasterVelocity = 10.0;  // Constant velocity.
+        fbCalc.MasterAcceleration = 0.0;  // No acceleration.
         
-        // 启用计算
+        // Enable calculation.
         fbCalc.Enable = true;
         
-        // 运行一个周期
+        // Run one cycle.
         fbCalc.runCycle();
         
-        // 输出结果
+        // Output the result.
         printf("%d\t%d\t%.1f\t\t%.1f\t\t%.1f\t\t%.3f\t\t%.3f\t\t%.3f\t\t%d\t%d\n",
                i, fbCalc.Enable, fbCalc.MasterPosition, fbCalc.MasterVelocity, fbCalc.MasterAcceleration,
                fbCalc.SlavePosition, fbCalc.SlaveVelocity, fbCalc.SlaveAcceleration,
                fbCalc.Busy, fbCalc.Error);
         
-        // 禁用计算
+        // Disable calculation.
         fbCalc.Enable = false;
         fbCalc.runCycle();
     }

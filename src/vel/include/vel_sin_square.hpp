@@ -12,7 +12,7 @@ namespace zmc {
 class VelSinSquarePlanner {
    private:
     void* pImpl;
-    // 速度参数
+    // Velocity parameters.
     // A_m, A_n;
     double S0 = 0, Sd;
     double V0, Vd; 

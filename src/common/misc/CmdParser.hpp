@@ -18,11 +18,11 @@ inline int stoiWrap(const std::string& cmds, int& errCode){
     try {
         val = std::stoi(cmds);
     }catch (const std::invalid_argument& e) {
-        // std::cerr << "无效的参数: " << e.what() << '\n';
+        // std::cerr << "Invalid argument: " << e.what() << '\n';
         errCode = -1;
         return 0;
     }catch (const std::out_of_range& e) {
-        // std::cerr << "数值超出范围: " << e.what() << '\n';
+        // std::cerr << "Value out of range: " << e.what() << '\n';
         errCode = -1;
         return 0;
     }
@@ -34,11 +34,11 @@ inline double stodWrap(const std::string& cmds, int& errCode){
     try {
         val = std::stod(cmds);
     }catch (const std::invalid_argument& e) {
-        // std::cerr << "无效的参数: " << e.what() << '\n';
+        // std::cerr << "Invalid argument: " << e.what() << '\n';
         errCode = -1;
         return 0;
     }catch (const std::out_of_range& e) {
-        // std::cerr << "数值超出范围: " << e.what() << '\n';
+        // std::cerr << "Value out of range: " << e.what() << '\n';
         errCode = -1;
         return 0;
     }

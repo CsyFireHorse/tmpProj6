@@ -7,16 +7,16 @@
 
 
 typedef struct {
-    servo_ctrl_word sc;    // 新控制字
-    servo_stat_word ss;    // 旧状态字
-    int run_delay  = 2000;         // 延时启动
-    int fault_reset_delay = 2000; // 延时再错误恢复
-    float zero_p;          // 零点位置
-    float offset_p;        // 偏移输出位置
-    int out_p;             // 输出位置
-    int out_v;             // 输出转速
-    int16_t out_t;             // 输出扭矩
-    bool reverse;          // 当前方向
+    servo_ctrl_word sc;    // New control word.
+    servo_stat_word ss;    // Previous status word.
+    int run_delay  = 2000;         // Startup delay.
+    int fault_reset_delay = 2000; // Delay before fault recovery.
+    float zero_p;          // Zero position.
+    float offset_p;        // Output position offset.
+    int out_p;             // Output position.
+    int out_v;             // Output velocity.
+    int16_t out_t;             // Output torque.
+    bool reverse;          // Current direction.
     void reset(double pos){
         out_p = pos;
         zero_p = out_p;

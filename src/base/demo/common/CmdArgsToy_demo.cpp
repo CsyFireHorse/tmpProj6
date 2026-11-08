@@ -6,11 +6,11 @@ using namespace zmc;
 
 
 void demo_variantToy() {
-    // 1. 使用VariantToy
+    // 1. Use VariantToy.
     VariantToy v1, v2, v3;
-    v1.set<double>(10.5);               // 存储为double
-    v2.set<int>(42);                    // 存储为int
-    v3.set<const char*>("Hello world"); // 存储为char*
+    v1.set<double>(10.5);               // Store as double.
+    v2.set<int>(42);                    // Store as int.
+    v3.set<const char*>("Hello world"); // Store as char*.
     
     std::cout << "v1: " << v1.get<double>() << std::endl;
     std::cout << "v2: " << v2.get<int>() << std::endl;
@@ -23,7 +23,7 @@ void demo_variantToy() {
 }
 
 void demo_variant_args() {
-    // 2. 使用Args
+    // 2. Use Args.
     char* argv[] = {"--double_val", "3.14159", "--int_val", "100", "--no_exist", "-1.0"};
     // , "--string_val", "Arguments demo"
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;

@@ -19,7 +19,7 @@ void cam_xyva_switch_segment_type_demo() {
 }
 
 void cam_xyva_max_PosVelAcc_demo() {
-    // 创建两个相邻的CAM段
+    // Create two adjacent cam segments.
     CamXyva lhs{270, 200, 0, 0};   
     CamXyva rhs{360, 0, 10, 0};  
     

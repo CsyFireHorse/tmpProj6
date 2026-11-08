@@ -1,6 +1,6 @@
 // Author: zmc
 // Date: 2026-01-14
-// Description: vector 分配器 demo（共享内存池）
+// Description: vector allocator demo (shared memory pool).
 #include <iostream>
 #include <vector>
 #include <cstddef>
@@ -12,7 +12,7 @@
 #include "common/misc/StatelessAllocator.hpp"
 
 // ==========================================================
-// 1. 简单的共享内存池 (本例使用简单的 malloc 包装，演示共享逻辑)
+// 1. Simple shared memory pool (this example wraps malloc to demonstrate sharing).
 // ==========================================================
 class SimplePool {
 public:
@@ -40,26 +40,26 @@ private:
 };
 
 // ==========================================================
-// 2. 有状态分配器 (C++11 风格)
+// 2. Stateful allocator (C++11 style).
 // ==========================================================
 template <typename T>
 class SharedAlloc {
 public:
     using value_type = T;
 
-    // 必须提供 rebind，容器内部（如树形结构或内部节点）分配时需要
+    // rebind is required for allocations inside containers, such as tree structures or internal nodes.
     template <typename U>
     struct rebind {
         using other = SharedAlloc<U>;
     };
 
-    // 持有指向池的指针
+    // Hold a pointer to the pool.
     SimplePool* pool;
 
-    // 构造函数
+    // Constructor.
     explicit SharedAlloc(SimplePool* p) noexcept : pool(p) {}
 
-    // 拷贝构造函数 (允许从 SharedAlloc<U> 构造 SharedAlloc<T>)
+    // Copy constructor (allows constructing SharedAlloc<T> from SharedAlloc<U>).
     template <typename U>
     SharedAlloc(const SharedAlloc<U>& other) noexcept : pool(other.pool) {}
 
@@ -73,7 +73,7 @@ public:
     }
 };
 
-// 相等性比较：指向同一个池的分配器被认为是等价的
+// Equality comparison: allocators that point to the same pool are considered equivalent.
 template <typename T, typename U>
 bool operator==(const SharedAlloc<T>& a, const SharedAlloc<U>& b) {
     return a.pool == b.pool;
@@ -85,19 +85,19 @@ bool operator!=(const SharedAlloc<T>& a, const SharedAlloc<U>& b) {
 }
 
 // ==========================================================
-// 3. 使用用例
+// 3. Usage example.
 // ==========================================================
 int main2() {
-    // 创建一个唯一的内存池
+    // Create a unique memory pool.
     SimplePool my_shared_pool("GlobalPool");
 
-    // 创建分配器实例
+    // Create allocator instances.
     SharedAlloc<int> alloc_for_v1(&my_shared_pool);
     SharedAlloc<double> alloc_for_v2(&my_shared_pool);
 
     std::cout << "--- Initializing Vectors ---\n";
 
-    // 关键点：在构造函数中传入分配器实例
+    // Key point: pass the allocator instance to the constructor.
     std::vector<int, SharedAlloc<int>> vec1(alloc_for_v1);
     // std::vector<double, SharedAlloc<double>> vec1(alloc_for_v2);
     std::vector<double, SharedAlloc<double>> vec2(alloc_for_v2);
@@ -124,7 +124,7 @@ int main2() {
 
 
 // ==========================================================
-// 5. 使用 MemoryAllocator 的示例
+// 5. Example using MemoryAllocator.
 // ==========================================================
 int main3() {
     std::cout << "=== MemoryAllocator Stateless Allocator Demo ===\n\n";

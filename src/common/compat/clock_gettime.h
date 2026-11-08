@@ -7,10 +7,10 @@
 #else
 #include "Windows.h"
 
-#define CLOCK_REALTIME  0// : 是指系统时间，随着系统时间的改变而改变。系统时钟会被用户而改变。并非不变的时间戳。
-#define CLOCK_MONOTONIC  1//  指从系统启动时开始计时。不受系统设置影响，也不会被用户改变。
-#define CLOCK_PROCESS_CPUTIME_ID 2 //  指这个进程运行到当前代码时，CPU花费的时间。
-#define CLOCK_THREAD_CPUTIME_ID  3//  指这个线程运行到当前代码时，CPU花费的时间。
+#define CLOCK_REALTIME  0// System time, which changes when the system clock is adjusted; it is not a monotonic timestamp.
+#define CLOCK_MONOTONIC  1// Time elapsed since system startup; unaffected by system clock adjustments.
+#define CLOCK_PROCESS_CPUTIME_ID 2 // CPU time consumed by this process up to the current point.
+#define CLOCK_THREAD_CPUTIME_ID  3// CPU time consumed by this thread up to the current point.
 
 // struct timespec { 
 //     long tv_sec; 

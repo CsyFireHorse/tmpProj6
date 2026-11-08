@@ -33,8 +33,8 @@ struct CommandStruct {
         
         // Large params: heap pointer + size
         struct {
-            void* heapPtr;      // 指向分配器分配的内存
-            size_t heapSize;    // 实际分配的大小
+            void* heapPtr;      // Memory allocated by the allocator.
+            size_t heapSize;    // Actual allocated size.
         } heap;
     } param;
     

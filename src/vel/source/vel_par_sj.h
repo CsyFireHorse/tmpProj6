@@ -20,11 +20,11 @@
 /*----------------------------------------------------------------------------*/
 /**
  * \file
- * \brief S型速度规划
+ * \brief S-curve velocity planning.
  *
  * \internal
  * \par Modification history
- * - 1.00 2022-3-12  CSY, 初次实现
+ * - 1.00 2022-3-12  CSY, initial implementation
  * \endinternal
  */
 /*----------------------------------------------------------------------------*/
@@ -43,7 +43,7 @@ namespace zmc
 
 /*----------------------------------------------------------------------------*/
 /**
-  \brief 7段S型速度规划 J约束
+  \brief Seven-segment S-curve velocity planning with jerk constraints.
   acc
               ___________
             /             \

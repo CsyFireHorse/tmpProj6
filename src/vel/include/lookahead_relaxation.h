@@ -15,12 +15,12 @@ extern "C" {
 
 /*
  * @params
- *      varr double[]  速度数组，长度为N
- *      sarr double[]  片段距离数组，长度为N-1
- *      N   int         varr的长度
- *      acc double[]    加速度 长度为N-1
- *      dec double[]    减速度 长度为N-1
- *      jerk double[]   加加速度 长度为N-1
+ *      varr double[]  Velocity array, length N.
+ *      sarr double[]  Segment distance array, length N-1.
+ *      N   int         Length of varr.
+ *      acc double[]    Acceleration array, length N-1.
+ *      dec double[]    Deceleration array, length N-1.
+ *      jerk double[]   Jerk array, length N-1.
  *
  */
 int lookahead_relaxation(double* varr, const double* sarr, int N, const double* acc,

@@ -51,7 +51,7 @@ typedef struct {
     } rt_bus_pdo_cell;
 
     bool is_axis(uint16_t subIndex = 0) const {
-        // CiA402：control word & status word {0x6040:0:2, 0x6041:0:2}
+        // CiA402: control word and status word {0x6040:0:2, 0x6041:0:2}.
         return find_pdo(outputs,
                         {(uint16_t)(PDO_PO_CTRL + subIndex * PDO_MULT_SERVO_OFFSET), 0, 2}) &&
                find_pdo(inputs,
@@ -95,11 +95,11 @@ struct MasterInfo {
     vector<uint32_t> ao_keys;
 };
 
-/** 从ENI文件中 解析 从站信息，主站信息，杂类信息
+/** Parse slave, master, and miscellaneous information from an ENI file.
  *
- * xml_file \param[in]      ENI 文件
- * slaves   \param[out]     从站信息
- * mast     \param[out]     主站信息和杂类信息
+ * xml_file \param[in]      ENI file.
+ * slaves   \param[out]     Slave information.
+ * mast     \param[out]     Master and miscellaneous information.
  *
  */
 int load_slaves_from_eni_xml_json(const char* xml_file, SlaveInfo& slaves,

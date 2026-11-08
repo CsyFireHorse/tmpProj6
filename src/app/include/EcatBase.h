@@ -61,7 +61,7 @@ public:
     int coe_sdo_upload(uint16_t slave_id, uint16_t index, uint8_t subindex,
                        uint8_t complete_access, uint32_t* data_len, void* data,
                        uint32_t timeout_ms);
-    // 设置PDO回调
+    // Set the PDO callback.
     int bind(EcatExtCtrlTaskHandler cb, void* obj);
     void unbind();
     int query_by_sdo(uint32_t slave, uint32_t index, uint8_t subindex, uint32_t len, int32_t* val);
@@ -82,7 +82,7 @@ private:
 
 /*----------------------------------------------------------------------------*/
 /**
-  \brief EtherCAT环境变量初始化
+  \brief Initialize EtherCAT environment variables.
 */
 /*----------------------------------------------------------------------------*/
 class ethercat_env

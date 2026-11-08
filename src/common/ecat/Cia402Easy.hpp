@@ -6,17 +6,17 @@
 namespace zmc{
 class Cia402Easy{
 public:
-    // 状态字的状态
+    // Status word states.
     typedef enum
     {
-        axis_sm_not_ready_to_switch_on = 0,         //!< 0：未启动状态  before init
-        axis_sm_switch_on_disabled,                 //!< 1：启动禁止状态, after init or after power off, not ready to power on
-        axis_sm_ready_to_switch_on,                 //!< 2：准备启动状态  ready to power on
-        axis_sm_switched_on,                        //!< 3：启动状态  after power on,  operation disabled
-        axis_sm_operation_enabled,                  //!< 4：操作使能状态 after power on,  operation enabled
-        axis_sm_quick_stop_active,                  //!< 5：停止状态
-        axis_sm_fault_reaction_active,              //!< 6：错误触发状态
-        axis_sm_fault,                              //!< 7：错误状态
+        axis_sm_not_ready_to_switch_on = 0,         //!< 0: Not started; before initialization.
+        axis_sm_switch_on_disabled,                 //!< 1: Switch-on disabled; after initialization or power-off, not ready to power on.
+        axis_sm_ready_to_switch_on,                 //!< 2: Ready to switch on; ready to power on.
+        axis_sm_switched_on,                        //!< 3: Switched on; after power-on, operation disabled.
+        axis_sm_operation_enabled,                  //!< 4: Operation enabled; after power-on, operation enabled.
+        axis_sm_quick_stop_active,                  //!< 5: Quick stop active.
+        axis_sm_fault_reaction_active,              //!< 6: Fault reaction active.
+        axis_sm_fault,                              //!< 7: Fault.
         axis_sm_halt,             
         axis_sm_home, 
     } axis_sm_t;
@@ -34,7 +34,7 @@ public:
         STATWORD_HOME_ERROR = 0x2027,
     }statword_t;
 
-    // 控制字及对应状态 并非一一对应 存在重复
+    // Control words and their corresponding states are not one-to-one; some are duplicated.
     enum sm_cmd_t
     {
         //                                       BITS 0–3 AND 7    Transitions
@@ -49,40 +49,40 @@ public:
         sm_cmd_halt                 = 0x10F,       //!< 0 1 1 1 1   4            halt
     };
     /**
-  \brief  定义对应控制字的轴的复合命令
+  \brief  Define composite axis commands corresponding to control words.
     */
     typedef enum
     {
         axis_cmd_nop,                           //!< 
-        axis_cmd_power_off,                     //!< 电源关闭
-        axis_cmd_ready_power,                   //!< 准备电源
-        axis_cmd_power_on,                      //!< 电源打开
-        axis_cmd_disable,                       //!< 轴禁能
-        axis_cmd_enable,                        //!< 轴使能
-        axis_cmd_ready_poweron,                 //!< 准备电源, 电源打开
-        axis_cmd_ready_poweron_enable,          //!< 准备电源, 电源打开, 轴使能
-        axis_cmd_poweron_enable,                //!< 电源打开, 轴使能
-        axis_cmd_alarm_clear,                   //!< 清除报警
-        axis_cmd_quick_stop,                    //!< 紧急刹车
+        axis_cmd_power_off,                     //!< Power off.
+        axis_cmd_ready_power,                   //!< Prepare power.
+        axis_cmd_power_on,                      //!< Power on.
+        axis_cmd_disable,                       //!< Disable the axis.
+        axis_cmd_enable,                        //!< Enable the axis.
+        axis_cmd_ready_poweron,                 //!< Prepare power and power on.
+        axis_cmd_ready_poweron_enable,          //!< Prepare power, power on, and enable the axis.
+        axis_cmd_poweron_enable,                //!< Power on and enable the axis.
+        axis_cmd_alarm_clear,                   //!< Clear the alarm.
+        axis_cmd_quick_stop,                    //!< Emergency stop.
         axis_cmd_halt,                          //!< halt
         axis_cmd_home,                          //!< home
         axis_cmd_poweroff_home,                 //!< power_off to home
-        axis_cmd_enable_position,               //!< 轴使能 + csp
+        axis_cmd_enable_position,               //!< Enable the axis and enter CSP mode.
         axis_cmd_end,                           //!< end of axis_cmd
     } axis_cmd_t;
-    /** \brief 定义初始化完成状态 */
+    /** \brief Define the initialization-complete state. */
     #define axis_sm_init_done                   (1 << axis_sm_switch_on_disabled) | (1 << axis_sm_ready_to_switch_on)
 
 
     /**
-      \brief  返回当前状态字对应的状态机
+      \brief  Return the state machine corresponding to the current status word.
 
-      \param  status            状态字
-      \return  返回当前状态字对应的状态机
+      \param  status            Status word.
+      \return  State machine corresponding to the current status word.
     */
     inline static axis_sm_t get_sm(uint16_t status)
     {
-        // 6041H状态字 BITS 0 – 3, 5 AND 6:
+        // Status word 6041H, bits 0–3, 5, and 6:
         //       0: xxxx xxxx x0xx 0000 Not ready to switch on
         //       1: xxxx xxxx x1xx 0000 Switch on disabled
         //       2: xxxx xxxx x01x 0001 Ready to switch on
@@ -121,11 +121,11 @@ public:
         return (status & STATWORD_HOME_ERROR) == STATWORD_HOME_ERROR;
     }
     /**
-      \brief  返回当前状态字状态机对应的状态字
+      \brief  Return the status word corresponding to the current status-word state machine.
 
-      \param  sm            状态字状态机
-      \param  status        状态字初始值
-      \return  返回状态字
+      \param  sm            Status-word state machine.
+      \param  status        Initial status-word value.
+      \return  Status word.
     */
     inline static uint16_t get_stat(axis_sm_t sm, uint16_t stat){
         static const uint16_t _table[][2] = {
@@ -145,10 +145,10 @@ public:
     }
     
     /**
-      \brief  返回当前控制字对应的命令
+      \brief  Return the command corresponding to the current control word.
 
-      \param  status            控制字
-      \return  返回命令
+      \param  status            Control word.
+      \return  Command.
     */
     inline static sm_cmd_t get_ctrl_st(uint16_t ctrl)
     {
@@ -162,7 +162,7 @@ public:
         return (sm_cmd_t) ((ctrl&0x80) ?sm_cmd_fault_reset:_get_ctrl_sm_table[0][ctrl & 0x0F]);
     }
 
-    // 给定控制字和当前状态 计算新状态
+    // Calculate the new state from the control word and current state.
     static uint16_t get_new_state(uint16_t ctrl, uint16_t stat){
         axis_sm_t st = get_sm(stat);
         sm_cmd_t cmd = get_ctrl_st(ctrl);
@@ -268,7 +268,7 @@ public:
         return out;
     }
 
-    // 给命令和当前状态 计算控制字 （有部分命令需要多个控制字）
+    // Calculate control words from the command and current state (some commands require multiple control words).
     static uint16_t get_ctrl(axis_cmd_t cmd, uint16_t stat){
         switch (cmd){
         case axis_cmd_nop:

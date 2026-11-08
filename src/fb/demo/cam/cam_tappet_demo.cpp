@@ -39,7 +39,7 @@ void CamTableTappet_demo0(){
     fillXyvaToy((Xyva*)dat, CAM_XYVA_LEN, 90);
 
     SMC_CAMTappet tappets[] = {
-        // 类型, 动作, 延迟, 持续时间, 组ID, 位置, 激活
+        // Type, action, delay, duration, group ID, position, activation.
         {TAPPET_pos, TAPPETACTION_on, 0, 0, 1, 10., 0xffffffff}, 
         {TAPPET_pos, TAPPETACTION_on, 0, 0, 2, 20., 0xffffffff}, 
         {TAPPET_all, TAPPETACTION_off, 0, 0, 1, 30., 0xffffffff}, 

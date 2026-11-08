@@ -82,8 +82,8 @@ class EcatPcieServo {
     uint8_t* input_buff_{nullptr};
     uint8_t* output_buff_{nullptr};
     std::string eni_path_;
-    bool is_pi_start_{false};    // PI启动状态/PI start state
-    bool is_pi_running_{false};  // PI运行状态/PI running state
+    bool is_pi_start_{false};    // PI start state
+    bool is_pi_running_{false};  // PI running state
     int8_t init_opmode_{0};
     static constexpr size_t PI_BUFFER_SIZE = 1024;
 };
