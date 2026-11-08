@@ -1190,7 +1190,7 @@ SLadderSegmentType SLadderRelaxer::_relaxation_sym_overlimit(SjRelaxParam& param
     // In symmetric case, V_0 = V_d, so check from V_0 to V_m
     bool is_plain_acc = has_dv_plain(V_0 - V_m, aMn);    
     // Calculate single trip distance (from V_0 to V_m)
-    // Due to symmetry, total distance = 2 × single trip distance
+    // Due to symmetry, total distance = 2 * single trip distance
     double S_total;
     if (is_plain_acc) {
         // nseg32 + nseg31

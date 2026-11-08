@@ -87,7 +87,7 @@ inline PcieContext* get_ctx_from_ecat(EcatFaker* pEcat) {
     return pEcat ? (PcieContext*)pEcat->pvCtrlTaskArg : nullptr;
 }
 
-// Bus run thread function – reuse zecm_fak implementation
+// Bus run thread function - reuse zecm_fak implementation
 int pcieBusRunThread(EcatFaker* pEcat) {
     if (!pEcat) return -1;
     return ecatFakeRun((ECAT_HANDLE)pEcat);

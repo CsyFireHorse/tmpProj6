@@ -10,11 +10,14 @@ void cam_xyva_switch_segment_type_demo() {
     CamXyva lhs = {0.0, 0.0, 2.0, 0.0};  
     CamXyva rhs = {10.0, 5.0, 3.0, 0.0}; 
 
-    printf("切换前：\n左段V=%.1f A=%.1f\n右段V=%.1f A=%.1f\n", lhs.dV, lhs.dA, rhs.dV, rhs.dA);
+    printf("Before switch:\n"
+           "Left segment V=%.1f A=%.1f\n"
+           "Right segment V=%.1f A=%.1f\n", lhs.dV, lhs.dA, rhs.dV, rhs.dA);
 
     if (0 == ((CamXyvaMethod&)lhs).switch_segmentType(rhs, 1)) {
-        printf("\n切换后：\n左段V=%.1f A=%.1f\n右段V=%.1f A=%.1f\n", lhs.dV, lhs.dA, rhs.dV,
-               rhs.dA);
+        printf("\nAfter switch:\n"
+               "Left segment V=%.1f A=%.1f\n"
+               "Right segment V=%.1f A=%.1f\n", lhs.dV, lhs.dA, rhs.dV, rhs.dA);
     }
 }
 

@@ -1,7 +1,7 @@
 # Lua runtime and `zmc.axfb`
 
-日期：2026-10-13
-代笔：GPT-6 Codex
+Date: 2026-10-13
+Author: GPT-6 Codex
 
 This directory builds four separate runtime artifacts. Their boundaries are
 intentional and must remain separate.
