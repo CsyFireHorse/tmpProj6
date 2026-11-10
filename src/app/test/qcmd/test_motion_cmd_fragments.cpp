@@ -1,4 +1,5 @@
 // GPT-6 Codex, 2026-11-04. Exercise packetization and the real serialized queue adapter.
+// GPT-6 (Codex), 2026-11-09. Complete flow recovery in the heartbeat pump.
 #include <gtest/gtest.h>
 
 #include <cstring>
@@ -17,7 +18,7 @@ class FragmentCommands : public zmc::MotionCmdInterface {
    public:
     FragmentCommands(zmc::CmdQueueType& commands, zmc::StatusQueueType& status, bool& exit)
         : MotionCmdInterface(commands, status, exit) {
-        // Complete one probe over the actual queues before testing packet serialization.
+        // Consume a heartbeat and apply its ACK before testing packet serialization.
         acknowledgeProbe(commands, status);
     }
     using MotionCmdScript::appendOrDeferItem;
@@ -32,11 +33,13 @@ class FragmentCommands : public zmc::MotionCmdInterface {
         ASSERT_TRUE(reply.appendItem(zmc::STAT_FLOWCTRL_STATUS, &flow, sizeof(flow)));
         ASSERT_TRUE(status.push(reply));
         updateStatusCache();
+        ASSERT_EQ(0, pumpHeartbeat());
         ASSERT_FALSE(flowPaused());
+        ASSERT_TRUE(commands.pop(probe));  // Discard the recovery round's heartbeat.
     }
 };
 
-// Runtime-backed tests must consume the probe in the motion cycle as well.
+// Runtime-backed tests consume the heartbeats in the motion cycle as well.
 void ready(zmc::FbMoveWrap& wrap, zmc::MotionCmdInterface& commands) {
     FlowCtrlConfig config = {};
     config.period = 1;
@@ -45,13 +48,15 @@ void ready(zmc::FbMoveWrap& wrap, zmc::MotionCmdInterface& commands) {
     wrap.runCycle();
     wrap.runCycle();
     commands.updateStatusCache();
+    ASSERT_EQ(0, commands.heartbeat());
+    wrap.runCycle();
     std::vector<CmdResult> results;
     commands.getCmdConfirmations(results);
 }
 
 // Decode exactly the transmitted group, including each packet's heartbeat trailer.
 void expectFragments(zmc::CmdQueueType& queue, uint16_t commandType, const void* data,
-                     size_t length, uint16_t firstSeq = 2) {
+                     size_t length, uint16_t firstSeq = 3) {
     std::vector<uint8_t> received;
     while (received.size() < length) {
         zmc::CmdPacket packet;
@@ -130,7 +135,7 @@ TEST(QcmdFragments, LongPacketTestConfirmsOnlyAfterFinalFragment) {
             EXPECT_TRUE(confirms.empty());
         } else {
             ASSERT_EQ(1u, confirms.size());
-            EXPECT_EQ(0x80000180u, confirms[0].id);
+            EXPECT_EQ(0x80000200u, confirms[0].id);
             EXPECT_EQ(zmc::FBM_TEST_LONG_PACKET, confirms[0].command_type);
             EXPECT_EQ(CMD_TARGET_CONTROLLER, confirms[0].target_kind);
             EXPECT_EQ(zmc::FB_STAT_DONE, confirms[0].status);
@@ -170,7 +175,7 @@ TEST(QcmdFragments, TypedMultiMoveKeepsAxisConfigurationBeforeTheGroup) {
         ASSERT_EQ(sizeof(axes), bytes);
         EXPECT_EQ(0, std::memcmp(axes, param, bytes));
         expectFragments(queue, relative ? zmc::FBM_MULTI_MOVE_REL : zmc::FBM_MULTI_MOVE,
-                        positions, sizeof(positions), 3);
+                        positions, sizeof(positions), 4);
         EXPECT_TRUE(queue.empty());
     }
 }
@@ -199,7 +204,7 @@ TEST(QcmdFragments, WholeGroupWaitsForSpaceWithoutConsumingSequenceNumbers) {
     EXPECT_FALSE(commands.isScriptBusy());
     for (size_t i = 1; i < queued; ++i) ASSERT_TRUE(queue.pop(filler));
     expectFragments(queue, zmc::FBM_MULTI_MOVE, positions, sizeof(positions),
-                    static_cast<uint16_t>(queued + 2));
+                    static_cast<uint16_t>(queued + 3));
     EXPECT_TRUE(queue.empty());
 }
 
@@ -224,7 +229,7 @@ TEST(QcmdFragments, BoundaryReservesHeartbeatAndStartsFragmentingAt493Bytes) {
     ASSERT_TRUE(it.next(type, bytes, param));
     EXPECT_EQ(zmc::FBM_HEARTBEAT, type);
     ASSERT_EQ(0, commands.submitItem(zmc::FBM_NOP, data, sizeof(data)));
-    expectFragments(queue, zmc::FBM_NOP, data, sizeof(data), 3);
+    expectFragments(queue, zmc::FBM_NOP, data, sizeof(data), 4);
 }
 
 TEST(QcmdFragments, ScriptMergingReservesHeartbeatAndWaitStillGatesLaterItems) {

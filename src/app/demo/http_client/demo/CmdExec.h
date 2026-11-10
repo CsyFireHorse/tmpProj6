@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "MotionHttpApi.h"
+#include "zmc_http_client.h"
 
 namespace zmc {
 

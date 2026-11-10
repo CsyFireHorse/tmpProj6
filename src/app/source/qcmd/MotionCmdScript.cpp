@@ -62,12 +62,22 @@ int MotionCmdScript::appendOrDeferItem(uint16_t type, const void* param, uint16_
     return motcmdRet(ZMC_NO_ERROR);
 }
 
+// Enqueue each pending axis-info refresh before clearing its mirror request.
+void MotionCmdScript::enqueueAxisInfoRefreshes() {
+    AxisInfoQuery query = {};
+    while (mirror_.nextAxisInfoRefresh(query.axis_id)) {
+        if (appendOrDeferItem(FBM_AXIS_INFO_QUERY, &query, sizeof(query)) != 0) break;
+        mirror_.finishAxisInfoRefresh(query.axis_id);
+    }
+}
+
 int MotionCmdScript::priorityAppendItem(uint16_t type, const void* param, uint16_t param_len) {
     return appendOrDeferItem(type, param, param_len);
 }
 
 int MotionCmdScript::heartbeat() {
     int ret = pumpHeartbeat();
+    if (!flowPaused()) enqueueAxisInfoRefreshes();
     int scriptRet = flowPaused() ? 0 : advanceScript();
     return ret != 0 ? ret : scriptRet;
 }

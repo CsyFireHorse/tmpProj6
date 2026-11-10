@@ -11,6 +11,7 @@
 #include "motbuf/MotCmd.hpp"
 #include "motbuf/MotionCmdTypes.hpp"
 #include "qcmd/MotionCmdMirror.hpp"
+#include "qcmd/MotionCmdFlow.hpp"
 
 namespace zmc {
 
@@ -38,23 +39,16 @@ class MotionCmdPack : public MotionCmdPort {
    protected:
     MotionStatusMirror mirror_;
 
-    // GPT-6.1 Sol, 2026-11-04. Self-probing flow uses the caller's existing serialization.
-    enum { kFlowLagLimit = 40, kLowProbeInterval = 20, kProbeWaitLimit = 40 };
-    bool normalFlow_ = false;
-    bool ackProgress_ = false;
-    uint16_t probeSeq_ = 0;
-    uint16_t flowAck_ = 0;
-    unsigned int lagCount_ = 0;
-    unsigned int probeCount_ = kLowProbeInterval;
+    // GPT-6 (Codex), 2026-11-09. Flow uses the caller's existing serialization.
+    MotionCmdFlow flow_;
     int probeResult_ = 0;
-    bool flowPaused() const { return !normalFlow_ || lagCount_ > kFlowLagLimit; }
+    bool flowPaused() const { return flow_.state() != MotionCmdFlow::State::Running; }
 
     // Shared bounded packetization for immediate requests and deferred script items.
     int buildItemPackets(uint16_t type, const void* param, uint16_t param_len, CmdPacket* packets,
                          size_t capacity, size_t& count);
     int sendPacketGroup(CmdPacket* packets, size_t count);
     int pumpHeartbeat();
-    void updateSeqAck(uint16_t ack);
 
    public:
     MotionCmdPack();
@@ -91,6 +85,8 @@ class MotionCmdPack : public MotionCmdPort {
     void clearDashboardCache();
     // Clear mirrored status and ACK state.
     void resetCache();
+    // Reset flow after the command queue sequence is restarted.
+    void resetFlow();
     uint32_t getAckSequence() const;
     uint32_t getAckTick() const;
 };

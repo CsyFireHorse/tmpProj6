@@ -1,4 +1,4 @@
-// GPT-6.1 Sol, 2026-11-04. Exercise self-probing through real command/status queues.
+// GPT-6 (Codex), 2026-11-09. Exercise heartbeat flow through real command/status queues.
 #include <gtest/gtest.h>
 #include "common/zmc/fbt_errorcode_def.h"
 #include "impl/fbt_impl_enum_def.h"
@@ -10,23 +10,24 @@ namespace {
 class FlowCommands : public zmc::MotionCmdInterface {
  public:
     explicit FlowCommands(zmc::FbMoveWrap& wrap) : MotionCmdInterface(wrap.getCmdInterface()) {}
+    using MotionCmdPack::pumpHeartbeat;
     bool paused() const { return flowPaused(); }
-    unsigned int lag() const { return lagCount_; }
     int probeResult() const { return probeResult_; }
 };
 
-// The configuration and probe are consumed by the real runtime, not a forced ready flag.
+// Consume configuration and heartbeat before enabling sends; leave scripts for the caller.
 void ready(zmc::FbMoveWrap& wrap, FlowCommands& command) {
     FlowCtrlConfig config = {};
     config.period = 1;
     ASSERT_EQ(0, command.setFlowConfig(config));
     ASSERT_EQ(0, command.heartbeat());
     wrap.runCycle();
-    command.updateStatusCache();
-    EXPECT_TRUE(command.paused());
     wrap.runCycle();
     command.updateStatusCache();
+    EXPECT_TRUE(command.paused());
+    ASSERT_EQ(0, command.pumpHeartbeat());
     ASSERT_FALSE(command.paused());
+    wrap.runCycle();
     std::vector<CmdResult> confirmations;
     command.getCmdConfirmations(confirmations);
 }
@@ -49,9 +50,8 @@ TEST(MotionHeartbeatFlow, CachedCommandExecutesAndResumesAfterLag) {
     EXPECT_EQ(zmc::FBM_TEST_LONG_PACKET, results[0].command_type);
     EXPECT_EQ(zmc::FB_STAT_DONE, results[0].status);
 
-    // Queries can consume progress before the next heartbeat; duplicates cannot clear lag.
+    // Queries retain the latest feedback; duplicate ACKs cannot postpone the timeout.
     command.heartbeat();
-    EXPECT_EQ(0u, command.lag());
     FlowCtrlStatus flow = {};
     command.getFlowStatus(flow);
     zmc::StatusPacket duplicate;
@@ -61,20 +61,17 @@ TEST(MotionHeartbeatFlow, CachedCommandExecutesAndResumesAfterLag) {
         command.applyStatusPacket(duplicate);
         command.heartbeat();
     }
-    EXPECT_EQ(40u, command.lag());
     EXPECT_FALSE(command.paused());
     command.heartbeat();
     ASSERT_TRUE(command.paused());
     ASSERT_EQ(0, command.testLongPacket(data, sizeof(data)));
-    // Drain already published work. Its replies alone must not recover a failed fresh probe.
+    // Consuming the backlog can recover flow without covering a designated heartbeat.
     for (int i = 0; i < 16; ++i) wrap.runCycle();
     command.updateStatusCache();
     EXPECT_TRUE(command.paused());
-    for (int i = 0; i < 20; ++i) command.heartbeat();
-    wrap.runCycle();
-    command.updateStatusCache();
+    ASSERT_EQ(0, command.heartbeat());
     ASSERT_FALSE(command.paused());
-    command.heartbeat();
+    EXPECT_EQ(0, command.probeResult());
     wrap.runCycle();
     wrap.runCycle();
     command.getCmdConfirmations(results);
@@ -83,29 +80,32 @@ TEST(MotionHeartbeatFlow, CachedCommandExecutesAndResumesAfterLag) {
     EXPECT_FALSE(command.isScriptBusy());
 }
 
-TEST(MotionHeartbeatFlow, TimeoutRejectsOldReplyAndCacheClearsDoNotRecover) {
+TEST(MotionHeartbeatFlow, TimeoutWaitsForProgressAndCacheClearsDoNotRecover) {
     zmc::FbMoveWrap wrap(0);
     FlowCommands command(wrap);
     ASSERT_EQ(0, command.heartbeat());
     ASSERT_EQ(1u, wrap.getCmdQueue().size());
-    for (int i = 0; i < 39; ++i) ASSERT_EQ(0, command.heartbeat());
-    EXPECT_EQ(1u, wrap.getCmdQueue().size());
+    for (int i = 0; i < 40; ++i) ASSERT_EQ(0, command.heartbeat());
+    EXPECT_EQ(3u, wrap.getCmdQueue().size());
+    EXPECT_EQ(0, command.probeResult());
     ASSERT_EQ(0, command.heartbeat());
-    EXPECT_EQ(2u, wrap.getCmdQueue().size());
+    EXPECT_EQ(3u, wrap.getCmdQueue().size());
     EXPECT_EQ(ZMC_ERR_HOST_RECV_TIMEOUT, command.probeResult());
     command.clearDashboardCache();
     command.resetCache();
     EXPECT_TRUE(command.paused());
-    wrap.runCycle();
-    command.updateStatusCache();
+    ASSERT_EQ(0, command.heartbeat());
+    EXPECT_EQ(ZMC_ERR_HOST_RECV_TIMEOUT, command.probeResult());
     EXPECT_TRUE(command.paused());
     FlowCtrlConfig config = {};
     config.period = 1;
     ASSERT_EQ(0, command.setFlowConfig(config));
-    wrap.runCycle();
-    wrap.runCycle();
+    for (int i = 0; i < 4; ++i) wrap.runCycle();
     command.updateStatusCache();
+    EXPECT_TRUE(command.paused());
+    ASSERT_EQ(0, command.heartbeat());
     EXPECT_FALSE(command.paused());
+    EXPECT_EQ(0, command.probeResult());
 }
 
 TEST(MotionHeartbeatFlow, FailedSendIsSpacedAndQueueResetIsDetected) {
@@ -123,15 +123,19 @@ TEST(MotionHeartbeatFlow, FailedSendIsSpacedAndQueueResetIsDetected) {
     ASSERT_EQ(0, command.heartbeat());
     EXPECT_TRUE(wrap.getCmdQueue().full());
     wrap.reset_runtime();
-    command.updateStatusCache();
+    ASSERT_EQ(0, command.heartbeat());
     ASSERT_NO_FATAL_FAILURE(ready(wrap, command));
     wrap.reset_runtime();
+    command.resetCache();  // Match the service stop path's mirror reset.
+    command.resetFlow();
+    ASSERT_EQ(0, command._heartbeat());  // A new sequence can appear before the next pump.
     command.updateStatusCache();
+    ASSERT_EQ(0, command.heartbeat());
     EXPECT_TRUE(command.paused());
     ASSERT_NO_FATAL_FAILURE(ready(wrap, command));
 }
 
-TEST(MotionHeartbeatFlow, ProbeAndAcknowledgementsCrossSequenceWrap) {
+TEST(MotionHeartbeatFlow, HeartbeatAndAcknowledgementsCrossSequenceWrap) {
     zmc::FbMoveWrap wrap(0);
     FlowCommands command(wrap);
     zmc::CmdPacket packet;
@@ -147,11 +151,54 @@ TEST(MotionHeartbeatFlow, ProbeAndAcknowledgementsCrossSequenceWrap) {
     ASSERT_EQ(0, command.setFlowConfig(config));
     wrap.runCycle();
     command.updateStatusCache();
+    ASSERT_EQ(0, command.pumpHeartbeat());
     ASSERT_FALSE(command.paused());
     wrap.runCycle();
     command.updateStatusCache();
     command.heartbeat();
-    EXPECT_EQ(0u, command.lag());
     EXPECT_FALSE(command.paused());
+}
+
+TEST(MotionHeartbeatFlow, WindowProgressAndZeroSnapshotsConverge) {
+    zmc::MotionCmdFlow flow;
+    typedef zmc::MotionCmdFlow::State State;
+    ASSERT_TRUE(flow.step(0, 0));
+    for (int i = 0; i < 19; ++i) EXPECT_FALSE(flow.step(0, 0));
+    EXPECT_TRUE(flow.step(0, 0));
+    ASSERT_TRUE(flow.step(100, 98));
+    ASSERT_EQ(State::Running, flow.state());
+    EXPECT_TRUE(flow.step(145, 105));  // A progressing ACK may trail by exactly 40 packets.
+    EXPECT_EQ(State::Running, flow.state());
+    EXPECT_TRUE(flow.step(147, 106));
+    EXPECT_EQ(State::Paused, flow.state());
+    EXPECT_FALSE(flow.step(147, 106));
+    EXPECT_TRUE(flow.step(147, 107));
+    ASSERT_EQ(State::Running, flow.state());
+    EXPECT_TRUE(flow.step(147, 0));  // Zero alone does not revoke the accepted baseline.
+    for (int i = 0; i < 39; ++i) EXPECT_TRUE(flow.step(147, 107));
+    EXPECT_EQ(State::Running, flow.state());
+    EXPECT_TRUE(flow.step(147, 107));
+    EXPECT_EQ(State::Stalled, flow.state());
+    EXPECT_FALSE(flow.step(147, 107));
+    EXPECT_TRUE(flow.step(148, 108));
+    EXPECT_EQ(State::Running, flow.state());
+    EXPECT_TRUE(flow.step(0, 108));
+    EXPECT_EQ(State::Paused, flow.state());
+    EXPECT_FALSE(flow.step(0, 108));
+}
+
+TEST(MotionHeartbeatFlow, ResetRestoresInitialFlow) {
+    zmc::MotionCmdFlow flow;
+    typedef zmc::MotionCmdFlow::State State;
+    ASSERT_TRUE(flow.step(100, 100));
+    for (int i = 0; i < 41; ++i) flow.step(100, 100);
+    ASSERT_EQ(State::Stalled, flow.state());
+    flow.reset();
+    EXPECT_EQ(State::Paused, flow.state());
+    EXPECT_TRUE(flow.step(1, 1));
+    EXPECT_EQ(State::Running, flow.state());
+    flow.reset();
+    EXPECT_TRUE(flow.step(0, 0));
+    EXPECT_FALSE(flow.step(0, 0));
 }
 }  // namespace

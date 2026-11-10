@@ -20,6 +20,7 @@ class MotionCmdScript : public MotionCmdPack {
 
     // Compact enqueue: merge into non-wait tail when canAppend, else new packet.
     int appendOrDeferItem(uint16_t type, const void* param, uint16_t param_len);
+    void enqueueAxisInfoRefreshes();
     int priorityAppendItem(uint16_t type, const void* param, uint16_t param_len);
 
     void armScriptTickGate(ScriptGateType gateType, uint32_t waitTicks, int axis);

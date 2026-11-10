@@ -59,6 +59,7 @@ int SrvCommand::start(RpcSession s, const std::string& path, bool use_ini,
         const int stop_ret = slot->motion.stop();
         if (stop_ret != 0) std::fprintf(stderr, "Startup rollback failed: %d\n", stop_ret);
         slot->cmdIf->resetCache();
+        if (stop_ret == 0) slot->cmdIf->resetFlow();
     } else {
         // The configured axis count seeds defaults; heartbeat sends the existing queries.
         slot->cmdIf->initAxisInfo(slot->motion.axis_count());
@@ -75,7 +76,10 @@ int SrvCommand::ecat_stop(RpcSession s) {
     const int sweep_ret = slot->cmdIf->scriptSweep();
     if (sweep_ret != 0) return sweep_ret;
     const int ret = slot->motion.stop();
-    if (ret == 0) slot->cmdIf->resetCache();
+    if (ret == 0) {
+        slot->cmdIf->resetCache();
+        slot->cmdIf->resetFlow();
+    }
     return ret;
 }
 

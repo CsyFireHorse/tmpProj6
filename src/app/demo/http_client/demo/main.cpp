@@ -17,7 +17,7 @@
 #include <string>
 
 #include "CmdExec.h"
-#include "MotionHttpApi.h"
+#include "zmc_http_client.h"
 #include "common/zmc/zmc_predef.h"
 
 namespace {
